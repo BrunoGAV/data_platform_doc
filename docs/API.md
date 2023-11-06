@@ -131,7 +131,7 @@ As views são as baseadas nos endpoints. Cada endpoint possui uma lista de argum
 Esta trata-se de todo o conjunto de dados que envolvem a aplicação do PowerBI. Seguindo a documentação, apenas as views serão tratadas.
 
 ### Grupos 
-Retorna os Workspaces (Groups) do Power BI 
+Retorna os Workspaces (Groups) do Power BI.
 
 #### def getGrupos()
 
