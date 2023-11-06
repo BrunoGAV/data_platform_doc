@@ -1,6 +1,6 @@
 # Resumo
 
-A utilização de APIs no pipeline de dados é recorrente. Tendo isto como premissa, foi desenvolvido um modelo de tratamento para APIs de forma que, independente de qual seja utilizada, haverá reaproveitamento de código.
+A utilização de APIs no pipeline de dados é recorrente. Tendo isto como premissa, foi desenvolvido um modelo de tratamento para APIs de forma que, independente de qual seja utilizada, haverá reaproveitamento de código. Dessa forma há ganhos expressivos de desempenho no código e na manutenção do mesmo.
 
 ## Diagrama de Sequênia 
 
