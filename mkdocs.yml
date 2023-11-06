@@ -1,0 +1,17 @@
+site_name: Data_Platform DOC
+theme:
+  name: readthedocs      
+
+markdown_extensions:
+  - admonition  
+  - footnotes
+  - attr_list
+  - md_in_html
+
+nav:
+  - Home: index.md
+  - API: API.md
+
+plugins:
+    - search
+    - mermaid2
