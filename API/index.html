@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="../img/favicon.ico" rel="shortcut icon"/>
+<title>API - Data_Platform DOC</title>
+<link href="../css/theme.css" rel="stylesheet"/>
+<link href="../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "API";
+        var mkdocs_page_input_path = "API.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a class="icon icon-home" href=".."> Data_Platform DOC
+        </a><div role="search">
+<form action="../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal current" href="./">API</a>
+<ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="#diagrama-de-sequenia">Diagrama de Sequênia</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#especificacoes-gerais">Especificações Gerais</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#model_api">Model_API</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#def-api_call">def api_call()</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-refresh_token">def refresh_token()</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-save_bd">def save_bd()</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-batch_insert_data">def batch_insert_data()</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#control_api">Control_API</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#def-getparams">def getParams()</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-get_df">def get_DF()</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-processjson">def processJSON()</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-setbd">def setBD()</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#view_api">View_API</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#powerbi">PowerBI</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="#grupos">Grupos</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#def-getgrupos">def getGrupos()</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-savegruposdfgroups">def saveGrupos(dfGroups):</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-main">def main():</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#gateways">Gateways</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#def-getgateways">def getGateways():</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-savegateways">def saveGateways():</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-jsongateways">def jsonGateways():</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-main_1">def main():</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#datasources">DataSources</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#def-paramsdatasource">def paramsDatasource():</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-getendpoints">def getEndPoints():</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-getdfdatasources">def getDFDatasources():</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-jsondatasources">def jsonDatasources():</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-savedatasources">def saveDatasources():</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#def-main_2">def main():</a>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Leitura_Notas_Fiscais/">Nota Fiscal</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="..">Data_Platform DOC</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href=".."></a></li>
+<li class="breadcrumb-item active">API</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="resumo">Resumo</h1>
+<p>A utilização de APIs no pipeline de dados é recorrente. Tendo isto como premissa, foi desenvolvido um modelo de tratamento para APIs de forma que, independente de qual seja utilizada, haverá reaproveitamento de código. Dessa forma há ganhos expressivos de desempenho no código e na manutenção do mesmo.</p>
+<h2 id="diagrama-de-sequenia">Diagrama de Sequênia</h2>
+<p>Conforme o modelo abaixo, mantem-se o mesmo padrão para todas as API´s consumidas.  </p>
+<div class="mermaid">sequenceDiagram
+  autonumber
+  View_API-&gt;&gt;Control_API: kwargs  
+  Control_API-&gt;&gt;Model_API: getDF
+  Control_API-&gt;&gt;Model_API: getParams
+  Control_API-&gt;&gt;Model_API: processJSON
+  Control_API-&gt;&gt;Model_API: setBD  
+  Model_API -&gt;&gt;API_e_DW: get_token
+  Model_API -&gt;&gt;API_e_DW: api_call
+  Model_API -&gt;&gt;API_e_DW: save_BD
+  API_e_DW --&gt;&gt; Model_API: RESPONSE
+  Model_API --&gt;&gt; Control_API: RESPONSE
+  Control_API --&gt;&gt; View_API: RESPONSE
+
+</div>
+<h2 id="especificacoes-gerais">Especificações Gerais</h2>
+<h3 id="model_api">Model_API</h3>
+<p>Etapa responsável pela modelagem dos POST e GET da API. Nessa camada, é feito o tratamento das mensagens de erro, a conversão dos campos em dataframe e também é controlado a inserção do dataframe no banco de dados de destino.</p>
+<h4 id="def-api_call">def api_call()</h4>
+<p>Método principal da model. Nela é definido o endpoint e o campo desejado no qual deseja armazenar o retorno.</p>
+<pre><code class="language-py">def api_call(url, field, max_attempts=3):
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>url</strong>: endpoint para requisição da API</li>
+<li><strong>field</strong>: campo requerido da reposta json</li>
+<li><strong>max_attempts</strong>: hpá uma tratativa que limita em 03 vezes a quantidade de tentativas da requisição</li>
+</ul>
+</div>
+<h4 id="def-refresh_token">def refresh_token()</h4>
+<p>Responsável por obter um novo token a partir das credenciais fornecidas para autenticação.</p>
+<pre><code class="language-py">def refresh_token():  
+</code></pre>
+<h4 id="def-save_bd">def save_bd()</h4>
+<pre><code class="language-py">def save_bd(df, **kwargs):
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>df</strong>: dataframe que será inserido no banco</li>
+<li>** <strong>kwargs </strong>: campo requerido da reposta json    </li>
+</ul>
+</div>
+<h4 id="def-batch_insert_data">def batch_insert_data()</h4>
+<pre><code class="language-py">def batch_insert_data(df, table_name, engine, schema, batch_size=50000):
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>df</strong>: dataframe que será inserido no banco</li>
+<li><strong>table_name</strong>: tabela de destinmo    </li>
+<li><strong>engine</strong>: engine é a responsável por fazer a conexão com o banco de dados destino</li>
+<li><strong>schema</strong>: scheme de destino</li>
+<li><strong>batch_size=50000</strong>: limitação de 50 mil linhas para cada iteração na inserção no banco de destino</li>
+</ul>
+</div>
+<h3 id="control_api">Control_API</h3>
+<p>Esta camada faz a intermediação entre a view e a model. Aqui são tratados os parâmetros fornecidos na view e direcionados para a model da API trabalhada.</p>
+<div class="admonition tip">
+<p class="admonition-title">Nota</p>
+<p>A maior parte dos métodos definidos aqui carregam apenas uma lista de parametros <em>**kwargs</em></p>
+</div>
+<h4 id="def-getparams">def getParams()</h4>
+<pre><code class="language-py">def getParams(**kwargs):
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>**kwargs</strong>: lista de argumentos para obtenção de IDs</li>
+</ul>
+</div>
+<div class="admonition warning">
+<p class="admonition-title"><strong>Atenção!</strong></p>
+<p>Este método retorna uma lista de IDs que já constam no banco e que são complementos para outro endpoint.</p>
+</div>
+<h4 id="def-get_df">def get_DF()</h4>
+<pre><code class="language-py">def getDF(**kwargs):
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>**kwargs</strong>: lista de argumentos para obtenção do dataFrame.</li>
+</ul>
+</div>
+<h4 id="def-processjson">def processJSON()</h4>
+<pre><code class="language-py">def processJSON(**kwargs):
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>**kwargs</strong>: lista de argumentos para obtençao do campo json para fazer o dump.</li>
+</ul>
+</div>
+<h4 id="def-setbd">def setBD()</h4>
+<pre><code class="language-py">def setBD(**kwargs):
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>**kwargs</strong>: lista de argumentos para fazer a persistência no banco.    </li>
+</ul>
+</div>
+<h3 id="view_api">View_API</h3>
+<p>As views são as baseadas nos endpoints. Cada endpoint possui uma lista de argumentos e uma tratativa do banco destino.</p>
+<pre><code class="language-py">    kwargs = {
+        'Argumentos',
+    } 
+    a = requisicao control
+    return a
+</code></pre>
+<h2 id="powerbi">PowerBI</h2>
+<p>Esta trata-se de todo o conjunto de dados que envolvem a aplicação do PowerBI. Seguindo a documentação, apenas as views serão tratadas.</p>
+<h3 id="grupos">Grupos</h3>
+<p>Retorna os Workspaces (Groups) do Power BI.</p>
+<h4 id="def-getgrupos">def getGrupos()</h4>
+<pre><code class="language-py">def getGrupos():
+    kwargs = {
+        'endpoint': "/groups",
+        'params': 'nao',
+    } 
+    dfGroups = getDF(**kwargs)
+    return dfGroups
+
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>endpoint</strong>: endpoint definido para os grupos do PowerBI</li>
+<li><strong>params</strong>: validador de parametros. Neste não há parametrização.</li>
+</ul>
+</div>
+<h4 id="def-savegruposdfgroups">def saveGrupos(dfGroups):</h4>
+<pre><code class="language-py">def saveGrupos(dfGroups):
+    kwargs = {
+        'df': dfGroups,        
+        'schema' : 'powerbi',
+        'table_name' : 'grupos',
+        'truncate' : 'yes'
+    }
+    setBD(**kwargs)        
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>df</strong>: dataframe inserido no banco</li>
+<li><strong>schema</strong>: schema destino</li>
+<li><strong>table_name</strong>: tabela destino</li>
+<li><strong>truncate</strong>: validação para truncar a tabela. No caso de grupos, não é feito o truncate</li>
+</ul>
+</div>
+<h4 id="def-main">def main():</h4>
+<pre><code class="language-py">def main():    
+    df = getGrupos()   
+    saveGrupos(df)      
+</code></pre>
+<div class="admonition example">
+<p>Executa, respectivamente, o carregamento do dataframe e a sua inserção no banco de destino.</p>
+</div>
+<h3 id="gateways">Gateways</h3>
+<p>Retorna os Gateways do Power BI</p>
+<h4 id="def-getgateways">def getGateways():</h4>
+<pre><code class="language-py">def getGateways():
+    kwargs = {
+        'endpoint': "/gateways",
+        'params': 'nao',
+    } 
+    df = getDF(**kwargs)
+    return df 
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>endpoint</strong>: endpoint definido para os gateways do PowerBI</li>
+<li><strong>params</strong>: validador de parametros. Neste não há parametrização.        </li>
+</ul>
+</div>
+<h4 id="def-savegateways">def saveGateways():</h4>
+<pre><code class="language-py">def saveGateways(df):
+    kwargs = {
+        'df': df,        
+        'schema' : 'powerbi',
+        'table_name' : 'gateways',
+        'truncate' : 'yes'
+    }
+    setBD(**kwargs) 
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>df</strong>: dataframe inserido no banco</li>
+<li><strong>schema</strong>: schema destino</li>
+<li><strong>table_name</strong>: tabela destino</li>
+<li><strong>truncate</strong>: validação para truncar a tabela. No caso de gateways, não é feito o truncate</li>
+</ul>
+</div>
+<h4 id="def-jsongateways">def jsonGateways():</h4>
+<pre><code class="language-py">def jsonGateways(df):
+
+    kwargs = {        
+        'df': df,
+        'jsonColumn': 'publicKey'                
+    } 
+    df = processJSON(**kwargs)
+
+    kwargs = {        
+        'df': df,
+        'jsonColumn': 'gatewayAnnotation'                
+    } 
+    df = processJSON(**kwargs)
+
+    return df
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>df</strong>: dataframe inserido no banco</li>
+<li><strong>jsonColumn</strong>: coluna json na qual será feito o dump</li>
+</ul>
+</div>
+<h4 id="def-main_1">def main():</h4>
+<pre><code class="language-py">def main():
+    df = getGateways()   
+    df = jsonGateways(df)
+    saveGateways(df)
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>df = getGateways()</strong>: obtem o dataframe principal</li>
+<li><strong>df = jsonGateways(df)</strong>: trata os campos json</li>
+<li><strong>saveGateways(df)</strong>: insere o dataframe no banco destino</li>
+</ul>
+</div>
+<h3 id="datasources">DataSources</h3>
+<p>Retorna as Fontes de Dados no Relatório do Workspace (Group)</p>
+<div class="admonition warning">
+<p class="admonition-title">Atenção!</p>
+<p><strong>Dependências:</strong> PowerBI Grupos e PowerBI Reports</p>
+</div>
+<h4 id="def-paramsdatasource">def paramsDatasource():</h4>
+<pre><code class="language-py">def paramsDatasource():
+
+    kwargs = {
+        'dbname': 'dbname',
+        'user': 'user',
+        'password' : 'password',
+        'host' : 'host',
+        'port': 'port',
+        'query':'SELECT g.id AS grupoID, r.datasetId AS reportID FROM powerbi.grupos g JOIN powerbi.reports r ON g.id = r.datasetworkspaceid'   
+    } 
+    IDs = getParams(**kwargs)
+    return IDs
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>dbname</strong>: nome do banco destino</li>
+<li><strong>user</strong>: usuário para autenticação no banco para consulta</li>
+<li><strong>password</strong>: senha do usuário do banco</li>
+<li><strong>host</strong>: endereço do banco</li>
+<li><strong>port</strong>: porta utilizada para conexão</li>
+<li><strong>query</strong>: consulta que retorna os valores que se tornarão os parametros da requisição</li>
+</ul>
+</div>
+<h4 id="def-getendpoints">def getEndPoints():</h4>
+<pre><code class="language-py">def getEndPoints(IDs):
+    lista = []
+
+    for id in IDs:
+        endpoint = f"/groups/{id[0]}/datasets/{id[1]}/datasources"        
+        print('item adicionado')
+        print(endpoint)
+        lista.append(endpoint)
+
+    return lista
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>lista = []</strong>: nome do banco destino</li>
+<li><strong>for id in IDs:</strong>: itera por todos os IDs carregados no método <em>paramsDatasource()</em></li>
+<li><strong>endpoint = f"/groups/{id[0]}/datasets/{id[1]}/datasources"</strong>: cria uma string com os valores de id[0] e id[1]       </li>
+</ul>
+</div>
+<h4 id="def-getdfdatasources">def getDFDatasources():</h4>
+<pre><code class="language-py">def getDFDatasources(IDs):    
+    lista = getEndPoints(IDs)
+    kwargs = {        
+        'endpoint': lista,
+        'params': 'sim',
+        'IDs': IDs
+    } 
+    df = getDF(**kwargs)
+    return df
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>endpoint</strong>: passa uma lista de endpoints</li>
+<li><strong>params</strong>: valida se há parametrização. Nesta view, há parâmetros</li>
+<li><strong>IDs</strong>: os IDs são os parâmetros passados na requisição </li>
+</ul>
+</div>
+<h4 id="def-jsondatasources">def jsonDatasources():</h4>
+<pre><code class="language-py">def jsonDatasources(df):
+    kwargs = {        
+        'df': df,
+        'jsonColumn': 'connectionDetails'                
+    } 
+    df = processJSON(**kwargs)
+    return df
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>df</strong>: dataframe com os campos json</li>
+<li><strong>jsonColumn</strong>: coluna json    </li>
+</ul>
+</div>
+<h4 id="def-savedatasources">def saveDatasources():</h4>
+<pre><code class="language-py">def saveDatasources(df):
+    kwargs = {
+        'df': df,        
+        'schema' : 'powerbi',
+        'table_name' : 'datasource',
+        'truncate' : 'yes'
+    }
+    setBD(**kwargs)  
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>df</strong>: dataframe a ser salvo</li>
+<li><strong>schema</strong>: esquema de destino</li>
+<li><strong>table_name</strong>: tabela de desteino</li>
+<li><strong>truncate</strong>: validação para truncar a tabela de destino antes do insert</li>
+</ul>
+</div>
+<h4 id="def-main_2">def main():</h4>
+<pre><code class="language-py">def main():    
+    IDs = paramsDatasource()
+    df = getDFDatasources(IDs)
+    df = jsonDatasources(df)
+    saveDatasources(df) 
+</code></pre>
+<div class="admonition example">
+<ul>
+<li><strong>IDs = paramsDatasource()</strong>: carregando os IDs para parametros das requisições</li>
+<li><strong>df = getDFDatasources(IDs)</strong>: carregando dataframe</li>
+<li><strong>df = jsonDatasources(df)</strong>: processando colunas json</li>
+<li><strong>saveDatasources(df)</strong>: inserindo dataframe no banco destino</li>
+</ul>
+</div>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href=".." title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../Leitura_Notas_Fiscais/" title="Nota Fiscal">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span><a href=".." style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../Leitura_Notas_Fiscais/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "..";</script>
+<script src="../js/theme_extra.js"></script>
+<script src="../js/theme.js"></script>
+<script src="../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@10.4.0/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

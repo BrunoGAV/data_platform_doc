@@ -1,6 +1,6 @@
 # Resumo
 
-A utilização de APIs no pipeline de dados é recorrente. Tendo isto como premissa, foi desenvolvido um modelo de tratamento para APIs de forma que, independente de qual seja utilizada, haverá reaproveitamento de código.
+A utilização de APIs no pipeline de dados é recorrente. Tendo isto como premissa, foi desenvolvido um modelo de tratamento para APIs de forma que, independente de qual seja utilizada, haverá reaproveitamento de código. Dessa forma há ganhos expressivos de desempenho no código e na manutenção do mesmo.
 
 ## Diagrama de Sequênia 
 
@@ -131,7 +131,7 @@ As views são as baseadas nos endpoints. Cada endpoint possui uma lista de argum
 Esta trata-se de todo o conjunto de dados que envolvem a aplicação do PowerBI. Seguindo a documentação, apenas as views serão tratadas.
 
 ### Grupos 
-Retorna os Workspaces (Groups) do Power BI 
+Retorna os Workspaces (Groups) do Power BI.
 
 #### def getGrupos()
 
