@@ -1,27 +1,53 @@
-## Nota Fácil
+# Nota Fácil
 
+## O que é?
 É um algoritmo estrutrado em liguagem Python, cujo objetivo é ler arquivos de notas fiscais (em pdf), extrair as informações principais do documento, como número da nota, valor líquido, data de emissão, CNPJ e Razão Social do prestador e do tomador de serviço, a fim de exportar todo o compilado das notas em forma de uma planilha no Excel.
 
-## Linha do Tempo
- No fim de julho de 2023 foi iniciado a criação do algoritmo, com isso, a cada mês de agosto, setembro e outubro, foram realizados testes com a pasta de notas fiscais refente a cada mês de vendas, e assim, o resultado de leitura foi comparado com o resultado do software que lia as notas anteriormente.
+## Ambiente
+Usar Anaconda
+Primeiramente, é preciso configurar o ambiente Python para conseguir executar o algoritmo. Como o scrtipt possui a funcionalidade de ler arquivos de extensão pdf, mas que não possuem texto selecionável, é necessária a instalação de dois pacotes: Tesseract e Poopler.
 
- O resultado do Nota Fácil foi superior em termos de qualidade, tempo e rastreamento das notas, comparado ao antigo serviço utilizado pela empresa.
 
 ## Estrutra do algortimo
-O algoritmo é composto por 4 arquivos Python:
+O algoritmo é composto por 6 arquivos em Python, de forma modularizada:
 
     leitura_NF.py
 
+    modulos_vairaveis.py
+
+    modulos_prefeituras.py
+
+    modulos_renomeia.py
+
+    modulos_empresas.py
+
     modulos_ler_imagem.py
 
-    modulos_script.py
-
-    modulos_prefeitura.py
 
 ### Arquivo "leitura_NF.py"
 Esse é o algoritmo que será executado para o processo de leitura rodar.
 
-Primeiramente, há um loop que percorre todos os diretórios da lista de diretórios definida anteriormente, e obtem o arquivo daquele diretório.
+Primeiramente, preparo ambiente para a exportação dos dados das notas. Assim, crio um DataFrame para alocar todas as variáveis escolhidas das notas, e algumas colunas de metadados.
+
+```py
+df = pd.DataFrame(columns=['Numero NF', 'Data Emissao', 'Valor Bruto', 'CNPJ Prestador', 'CNPJ Tomador', 'Razao Social Prestador','Razao Social Tomador', 'Prefeitura', 'Script','Caminho', 'Caminho Curto', 'Arquivo'])
+```
+!!! example ""
+
+    - **Numero NF**: número da nota fiscal
+    - **Data Emissao**: data (ou data e hora) em que a nota foi emitida
+    - **Valor Bruto**: valor bruto da nota fiscal (sem descontos)
+    - **CNPJ Prestador**: número do CNPJ do colaborador
+    - **CNPJ Tomadorr**: número do CNPJ da empresa GAV
+    - **Razao Social Prestador**: razão social do colaborador
+    - **Razao Social Tomador**: razão social da empresa GAV
+    - **Prefeitura**: local de prestação do serviço (ou prefeitura da nota emitida)
+    - **Script**: nome da função no código que a nota foi executada
+    - **Caminho**: caminho original de onde vem a nota
+    - **Caminho Curto**: últimas 3 pastas do caminho original
+    - **Arquivo**: nome do arquivo
+
+
 
 ``` py
 posicao = 0
@@ -62,6 +88,24 @@ Agora com a variável "texto_limpo", há 3 possibilidades:
     - **1**) Se o nome da "prefeitura X" estiver no texto_limpo, então será executado o script da prefeitura X.
     - **2**) Se o texto_limpo conter nenhuma palavra, ou seja, o PDF está não selecionável, como uma imagem, então vou tratar a imagem, extrair o texto da imagem e verificar se a prefeitura X está no texto, para executar o script da prefeitura correta.
     - **3**) O texto_limpo não contém nenhum nome de prefeitura que tenho registro, logo na planilha do Excel vai conter esse arquivo com a informação "não_achado".
+
+![alt text](pdf1.jpg)
+
+Então para essas possibilidades o código fica da seguinte forma:
+
+```py
+elif any('Município de Uberlândia' in item for item in texto_limpo): 
+    modulos_variaveis.script_uberlandia_imagem(doc_pdf, caminho2, arquivo, df)
+
+elif texto == '\x0c' or '\x0c' in texto :
+    texto_imagem = modulos_ler_imagem.get_text_from_any_pdf(doc_pdf)
+    texto_imagem = texto_imagem.split('\n')
+    texto_imagem = [item.strip() for item in texto_imagem if item.strip() != '']
+
+    elif any('PREFEITURA MUNICIPAL DE BELEM' in item for item in texto_imagem):
+        modulos_variaveis.script_belem_imagem(texto_imagem, doc_pdf, caminho2, arquivo, df)
+
+```
 
 
 ## Tema 2
