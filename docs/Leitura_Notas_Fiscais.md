@@ -50,7 +50,7 @@ df = pd.DataFrame(columns=['Numero NF', 'Data Emissao', 'Valor Bruto', 'CNPJ Pre
 
 
 #### Entrada e saída de dados
-Há duas forma de fazer definir o input e output dos arquivos nesse código:
+Há duas forma de definir o input e output dos arquivos nesse código:
 
 * Em formato de variável, importando as variáveis de caminho de entrada e saída de um arquivo .env. Assim, também crio uma lista com os diretórios de input.
 ```py 
@@ -59,6 +59,11 @@ d2 = os.getenv('CAMINHO_NF_TLK')
 tabela_resposta = os.getenv('CAMINHO_RESULTADO')
 lista_diretorios = [d1,d2]
 ```
+!!! example ""
+
+    - **os.getenv**: recupera a variável do arquivo env
+    - **tabela_resposta**: contém o caminho de onde colocar o dataframe produzido no código
+    - **lista_diretorios**: lista que guarda os caminhos das notas
 
 * Definindo no próprio código diretamente
 ```py
@@ -102,6 +107,12 @@ for item in lista_diretorios:
                     print('CAMINHO DA NOTA =', caminho)
                     
 ```
+
+!!! example ""
+
+    - **caminho**: caminho de localização do arquivo
+    - **caminho_curto**: as três últimas pastas do caminho
+
 
 ##### Leitura da Nota
 Após essa etapa, invoco a função responsável pela leitura da nota "le_contrato" (esclarecida posteriormente), armazenando o resultado na variável "texto". Em seguida, o conteúdo passa por um processo de limpeza de espaçamentos e é armazenado na variável "texto_lista". Posteriormente, são removidos os valores vazios, transformando a variável em "texto_limpo". 
