@@ -32,6 +32,7 @@ Primeiramente, preparo ambiente para a exportação dos dados das notas. Assim, 
 ```py
 df = pd.DataFrame(columns=['Numero NF', 'Data Emissao', 'Valor Bruto', 'CNPJ Prestador', 'CNPJ Tomador', 'Razao Social Prestador','Razao Social Tomador', 'Prefeitura', 'Script','Caminho', 'Caminho Curto', 'Arquivo'])
 ```
+
 !!! example ""
 
     - **Numero NF**: número da nota fiscal
@@ -48,21 +49,58 @@ df = pd.DataFrame(columns=['Numero NF', 'Data Emissao', 'Valor Bruto', 'CNPJ Pre
     - **Arquivo**: nome do arquivo
 
 
+#### Entrada e saída de dados
+Há duas forma de fazer definir o input e output dos arquivos nesse código:
+
+* Em formato de variável, importando as variáveis de caminho de entrada e saída de um arquivo .env. Assim, também crio uma lista com os diretórios de input.
+```py 
+d1 = os.getenv('CAMINHO_NF')
+d2 = os.getenv('CAMINHO_NF_TLK')
+tabela_resposta = os.getenv('CAMINHO_RESULTADO')
+lista_diretorios = [d1,d2]
+```
+
+* Definindo no próprio código diretamente
+```py
+d1 = r'C:\Users\usuario.nome\Pasta1\Pasta2\Notas_Comissoes\Notas-Salas'
+d2 = r'C:\Users\usuario.nome\Pasta1\Pasta2\Notas_Comissoes\Notas-Promo-Tlmk'
+tabela_resposta = r'C:\Users\usuario.nome\Pasta1\Pasta2\Notas_Comissoes\Resultado\Leitura.xlsx'
+lista_diretorios = [d1,d2]
+```
+
+A diferença entre as duas, é que a primeira torna o código mais limpo e organizado.
+
+
+#### Contagem de arquivos
+Após estabelecer os diretórios, navego por cada pasta e contabilizo a quantidade total de arquivos presentes. Isso é feito com o propósito de criar um monitoramento que apresenta a porcentagem de notas lidas em relação ao total previamente definido. Esse acompanhamento visa proporcionar uma visão clara do progresso na leitura das notas em relação à meta estabelecida.
+
+```py
+qtd_arquivos = 0
+for i in lista_diretorios:
+    for diretorio_atual, subdiretorios, arquivos in os.walk(lista_diretorios[lista_diretorios.index(i)]):
+            for arquivo in arquivos:
+                qtd_arquivos += 1
+```
+
+
+#### Criação do Loop
+Estabeleço um loop que percorre cada diretório da lista de diretórios, adentrando em cada pasta de cada diretório e examinando, posteriormente, cada arquivo contido em cada pasta. Durante esse processo, verifica-se se o arquivo possui a extensão .pdf. Caso positivo, são definidas duas variáveis essenciais: o caminho completo do arquivo (caminho) e o caminho relativo em relação ao diretório principal (caminho curto). Por fim, o script imprime o caminho completo do arquivo em questão.
 
 ``` py
 posicao = 0
 
-for cidade in lista_diretorios:
+for item in lista_diretorios:
     diretorio_inicial = lista_diretorios[posicao]
     posicao += 1
     for diretorio_atual, subdiretorios, arquivos in os.walk(diretorio_inicial):
         for arquivo in arquivos:
             try:
-                if arquivo.lower().endswith('.pdf'):
-                    doc_pdf = diretorio_atual + '\\' + arquivo
-                    curto = doc_pdf.split('\\')[-4:-1]
-                    caminho2 = (curto[0] + '/' + curto[1] + '/' + curto[2]) 
-                    print('DOCUMENTO',doc_pdf)
+                if arquivo.lower().endswith('.pdf'): # Se é da extensão .pdf
+                    caminho = diretorio_atual + '\\' + arquivo
+                    caminho_curto = caminho.split('\\')[-4:-1]
+                    caminho_curto = (caminho_curto[0] + '/' + caminho_curto[1] + '/' + caminho_curto[2]) 
+                    print('CAMINHO DA NOTA =', caminho)
+                    
 ```
 
 
