@@ -103,22 +103,119 @@ for item in lista_diretorios:
                     
 ```
 
+##### Leitura da Nota
+Após essa etapa, invoco a função responsável pela leitura da nota "le_contrato" (esclarecida posteriormente), armazenando o resultado na variável "texto". Em seguida, o conteúdo passa por um processo de limpeza de espaçamentos e é armazenado na variável "texto_lista". Posteriormente, são removidos os valores vazios, transformando a variável em "texto_limpo". 
 
-No arquivo selecinado, aplico a função le_contrato que está guardada em outro módulo. Essa função faz a extração de texto do arquivo PDF. Dessa forma, armazeno na variável "texto_limpo", a lista de palavras que a função retornou, de uma maneira tratada e limpa.
+Dessa forma, temos agora a variável fundamental para todo o código, que contém o texto totalmente tratado e pronto para ser utilizado nas próximas etapas.
 
 
 ```py
-modulos_variaveis.le_contrato(doc_pdf)
+# Executa função de ler o pdf
+modulos_variaveis_v13.le_contrato(caminho)
 
 # Armazena o texto
-texto = modulos_variaveis.output_string.getvalue()
+texto = modulos_variaveis_v13.output_string.getvalue()
 
 # Tira os espaçamentos
 texto_lista = texto.split('\n')
-
-# Aplica strip() em todos os itens e remove valores vazios
-texto_limpo = [item.strip() for item in texto_lista if item.strip() != '']
 ```
+
+![alt text](texo.jpg)
+
+![alt text](texo_limpo.jpg)
+
+
+##### Condicionais das prefeituras
+
+Após a extração do texto da nota, a variável "texto_limpo" é submetida a várias condicionais com o objetivo de determinar a qual prefeitura ela se relaciona. Uma vez identificada a prefeitura específica, o script executa o processo de captura das variáveis pertinentes utilizando o módulo de variáveis, cujo funcionamento será detalhado posteriormente. 
+
+Esse conjunto de condicionais visa direcionar o fluxo do programa para a execução das etapas específicas associadas a cada prefeitura, garantindo uma abordagem personalizada e eficiente para cada caso.
+
+```py
+# PREFEITURA DE NATAL
+elif any('Prefeitura Municipal do Natal' in item for item in texto_limpo):
+    modulos_variaveis_v13.script_natal(texto_limpo, caminho, caminho_curto, arquivo, df)
+
+# PREFEITURA DE MANAUS
+elif any('PREFEITURA DE MANAUS' in item for item in texto_limpo):
+    modulos_variaveis_v13.script_manaus(texto_limpo, caminho, caminho_curto, arquivo, df)
+
+# PREFEITURA DE RIO BRANCO
+elif any('Prefeitura do Município de Rio Branco' in item for item in texto_limpo):
+    modulos_variaveis_v13.script_rio_branco(texto_limpo, caminho, caminho_curto, arquivo, df)
+```
+
+##### PDF com imagem
+Após passar por todas as condicionais de processamento dos textos relacionadas às prefeituras, o código realiza uma verificação final. Ele avalia se a variável "texto_limpo" contém os caracteres '\x0c' ou '\n0'. Se essa condição for satisfeita, indica que o texto é proveniente de uma nota em PDF não selecionável, como uma imagem de um print.
+
+Nesse cenário, ao atender a essa condição, o código executa um processo para extrair os dados dessa imagem (explicado no tópico "módulo ler imagem"), e aloca o resultado na variável "texto_imagem". 
+
+```py
+elif texto == '\x0c' \
+or '\x0c' in texto \
+or '\n0' in texto :
+
+script = 'imagem'
+
+# Executa scritp de leitra de imagem
+texto_imagem = modulos_ler_imagem_v1.get_text_from_any_pdf(caminho)
+texto_imagem = texto_imagem.split('\n')
+texto_imagem = [item.strip() for item in texto_imagem if item.strip() != '']
+```
+A partir deste ponto, o código continua a percorrer as condições subsequentes, verificando se o conteúdo se encaixa em alguma prefeitura específica.
+
+```py
+# PREFEITURA DE UBERABA IMAGEM
+elif any('PREFEITURA MUNICIPAL DE UBERABA' in item for item in texto_imagem):
+    modulos_variaveis_v13.script_uberaba_imagem(texto_imagem, caminho, caminho_curto, arquivo, df)
+
+# PREFEITURA DE BELÉM IMAGEM
+elif any('PREFEITURA MUNICIPAL DE BELEM' in item for item in texto_imagem):
+    modulos_variaveis_v13.script_belem_imagem(texto_imagem, caminho, caminho_curto, arquivo, df)
+
+# PREFEITURA DE ANANINDEUA IMAGEM
+elif any('PREFEITURA MUNICIPAL DE ANANINDEUA' in item for item in texto_imagem):
+    modulos_variaveis_v13.script_ananindeua_imagem(texto_imagem, caminho, caminho_curto, arquivo, df)
+```
+
+##### Prefeitura não existente
+Após percorrer todas as condições relacionadas aos casos de texto e imagem, e não encontrar uma correspondência em nenhuma delas, a variável é redirecionada para a cláusula "else". Nesse ponto, o código tenta, pelo menos, extrair o nome da prefeitura associada ao novo caso.Se bem-sucedido, o nome da prefeitura é extraído, e as outras variáveis são configuradas como brancas. Em seguida, todas as variáveis são adicionadas a uma lista, que é inserida no dataframe.
+
+No caso de não ser possível extrair o nome da prefeitura, a variável permanece em branco, e, juntamente com as outras variáveis em branco, uma lista é criada e inserida como uma nova linha no dataframe. 
+
+Essa abordagem permite lidar de maneira flexível com situações não previamente mapeadas, buscando ao menos identificar o nome da prefeitura mesmo quando a estrutura do documento não segue os padrões conhecidos.
+
+```py
+else:
+for indice, item in enumerate(texto_imagem):
+    if 'prefeitura' in item.lower() or 'município' in item.lower():
+        prefeitura = texto_imagem[indice]
+        break
+    else:
+        prefeitura = 'nao_achado_imagem'
+
+num_nf = 'imagem'
+data_emissao = 'imagem'
+vlr_liquido = 'imagem' 
+cnpj_prestador = 'imagem'
+cnpj_tomador = 'imagem'
+razao_prestador = 'imagem'
+razao_tomador = 'imagem'
+script = 'imagem_sem_codigo'
+
+lista_variaveis = [num_nf,data_emissao, vlr_liquido, 
+                cnpj_prestador, cnpj_tomador, 
+                razao_prestador, razao_tomador, 
+                prefeitura, script, caminho, caminho_curto, arquivo]
+
+# Inserção da lista no DataFrame
+df.loc[len(df)] = lista_variaveis
+
+# Imprimir a quantidade de linhas do DataFrame
+print("Quantidade de linhas:", df.shape[0]) 
+```
+
+
 
 
 Agora com a variável "texto_limpo", há 3 possibilidades:
