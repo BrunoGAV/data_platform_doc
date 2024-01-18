@@ -359,17 +359,50 @@ df['Empresa Tomador'] = np.where(
 )
 ```
 # 1.12 Coluna de Novos Nomes
-Visando também renomear os arquivos baseado no conteúdo das notas, o código contém uma função que baseada em condições, cria uma variável com um nome padrão para a nota, sendo o novo nome "Razão social do prestador + codigo do tomador + valor do serviço da nota". Essa função está localizada no módulo variaveis. 
+Com o intuito de padronizar os nomes dos arquivos de acordo com o conteúdo das notas fiscais, introduzimos uma coluna com um formato padrão: "Razão social do prestador + código do tomador + valor do serviço da nota". A criação dessa coluna é realizada invocando a função coluna_altera_nome do módulo variáveis. 
+
+Posteriormente, efetuamos uma limpeza na coluna, substituindo caracteres específicos e removendo acentos utilizando a função unidecode. Essa estratégia visa estabelecer uma identificação uniforme e descritiva para cada nota fiscal, facilitando a organização e referência dos arquivos
 
 ```py
 # Cria a coluna com o nome do arquivo alterado
-df['Arquivo_Nome_Alterado'] = df.apply(modulos_variaveis_v13.coluna_altera_nome4, axis=1)
+df['Arquivo_Nome_Alterado'] = df.apply(modulos_variaveis.coluna_altera_nome, axis=1)
 df['Arquivo_Nome_Alterado'] = df['Arquivo_Nome_Alterado'].apply(modulos_variaveis_v13.limpa_acento)
 df['Arquivo_Nome_Alterado'] = df['Arquivo_Nome_Alterado'].str.replace("'", '')
 df['Arquivo_Nome_Alterado'] = df['Arquivo_Nome_Alterado'].str.replace("@", '')
 df['Arquivo_Nome_Alterado'] = df['Arquivo_Nome_Alterado'].astype(str)
 df['Arquivo_Nome_Alterado'] = df['Arquivo_Nome_Alterado'].apply(unidecode)
 ```
+Depois, é chamada a função que renomeia o próprio arquivo, contida no modulo renomear.
+
+```py
+# Renomeia os arquivos
+modulos_renomear.renomeia(df)
+```
+##### Exportação do Resultado
+
+Durante o tratamento do dataframe já feito, utiliza-se alguns comandos de exportação dessa tabela para o Excel, com o intuito de garantir que, mesmo que o código dê algum erro no final, seja possível exportar a tabela, mesmo sem tratamento
+
+```py
+df.to_excel(r'C:\Users\usuario.nome\Pasta1\Pasta2\Resultado.xlsx', index=False)
+```
+
+Mas no fim do código, exporta-se o dataframe pelo caminho de retorno indicado no arquivo .env
+
+```py
+df.to_excel(tabela_resposta, index=False)
+```
+
+##### Contagem do Tempo
+Por fim, é exposto no terminal o tempo total da leitura das notas.
+
+```py
+# Conta o tempo de execução
+tempo_final = time.time()
+tempo_total = (tempo_final - tempo_inicio)/60
+print('exportado para excel')
+print('Tempo total', tempo_total, 'minutos')
+```
+
 
 Agora com a variável "texto_limpo", há 3 possibilidades:
 !!! example ""
