@@ -257,7 +257,119 @@ df.loc[len(df)] = lista_variaveis
     - **df**: datafrane que está sendo construído durante o código
 
 
+##### 1.8 Tentativa e Erro
+Todo esse código que exerce sobre esse arquivo selecionado no loop de pastas, passa por um processo de tentativa e erro, utilizando o "try except". Dessa forma, mesmo que ocorra algum erro durante a execução, o algoritmo não irá travar. Nesse sentido, ele simplesmente irá entender aquela nota como erro, preencher a lista_variaveis com a palavra "erro" nas variáveis, e inseri-la nno dataframe.
 
+```py
+try:
+    if arquivo.lower().endswith('.pdf'): # Se é da extensão .pdf
+        caminho = diretorio_atual + '\\' + arquivo
+        caminho_curto = caminho.split('\\')[-4:-1]
+        caminho_curto = (caminho_curto[0] + '/' + caminho_curto[1] + '/' + caminho_curto[2]) 
+        print('CAMINHO DA NOTA =', caminho)
+
+        ...
+
+except Exception as e:
+    lista_variaveis = ['erro', 'erro', 'erro', 'erro', 'erro', 'erro', 'erro', 'erro', e, caminho, caminho_curto, arquivo]
+    df.loc[len(df)] = lista_variaveis
+
+```
+
+##### 1.9 Carregamento de leitura
+Para haver um acompanhamento da leitura, o algortimo expoe no terminal algumas informações:
+
+* O nome do arquivo (escrito no no início do loop);
+* Quantidade de notas lidas;
+* Quantidade e porcentagem de notas imperfeitas (qualquer uma que não tiver a palavra "script" dentro da variável "script", ou seja, que não tem nenhuma unção apropriada para aquela prefeitura);
+* Visualização de uma barra de progresso (baseada na quantidade de notas lidas pelo total).
+
+```py
+# Calcula notas com algum tipo de erro ou não leitura
+Soma_Notas_Erro = np.sum(np.logical_not(df['Script'].str.contains('script')))
+Porcentagem = round((Soma_Notas_Erro / qtd_arquivos) * 100,2)
+
+# Mostra barra de processamento
+print('Quantidade NOTAS LIDAS =', len(df),'/', qtd_arquivos)
+print('Quantidade NOTAS IMPERFEITAS =', Soma_Notas_Erro, '==', Porcentagem, '%')
+lista_df = list(range(1,len(df)+1))
+
+for i in tqdm(list(range(1,len(df)+1)), total=qtd_arquivos,  unit="item", bar_format="{desc}: {percentage:.2f}% {bar}",desc="Processando"):
+    pass
+```
+!!! example ""
+
+    - **qtd_arquivos**: quantidade total de arquivos, calculada na sessão "1.2 Contagem de arquivos"
+
+
+##### 1.10 Tratamento e Limpeza do DataFrame
+Após a criação do DataFrame, realiza-se ajustes para aprimorar a qualidade dos dados. Especificamente:
+
+* Coluna CNPJ:
+    * Remoção de caracteres não numéricos, mantendo apenas os dígitos.
+    * Correção de um CNPJ específico para evitar interpretação incorreta
+* Coluna Valor:
+    * Eliminação de caracteres não numéricos, garantindo apenas valores numéricos.
+* Coluna Data:
+    * Substituição de '-' por '/', uniformizando o formato.
+    * Padronização de todas as datas para o formato dd/mm/aaaa.
+
+
+```py
+df['CNPJ Prestador'] = df['CNPJ Prestador'].str.replace(r'\D', '', regex=True)
+df['CNPJ Prestador'] = df['CNPJ Prestador'].str.strip()
+
+df['CNPJ Tomador'] = df['CNPJ Tomador'].str.replace(r'\D', '', regex=True)
+df['CNPJ Tomador'] = df['CNPJ Tomador'].str.strip()
+
+# Substitui a leitura errada do cnpj de GAV GRAMADO TRES
+df['CNPJ Tomador'] = df['CNPJ Tomador'].str.replace('90094155000102', '50094155000102')
+
+df['Valor Liquido'] = df['Valor Liquido'].str.replace(r'[a-zA-Z$]', '', regex=True)
+
+df['Data Emissao'] = df['Data Emissao'].str.replace(r'-', '/', regex=True)
+df['Data Emissao'] = df['Data Emissao'].str.extract(r'(\d{2}/\d{2}/\d{4})', expand = False)
+```
+
+##### 1.11 Validação do CNPJ
+Para validar a consistência dos CNPJs do Tomador nas notas fiscais em relação às empresas registradas no banco de dados, realizamos a extração da tabela de empresas do DW, situada no módulo empresas. Utilizando Python, efetuamos a limpeza e tratamento necessários na tabela de empresas para garantir a integridade dos dados. Em seguida, comparamos os CNPJs do Tomador nas notas fiscais com os CNPJs da tabela de empresas. 
+
+Quando há correspondência, incorporamos ao DataFrame das notas fiscais duas novas colunas: 'Codigo Tomador' com o código da empresa correspondente, e 'Empresa Tomador' com a razão social correspondente. Este processo tem como objetivo assegurar a conformidade dos CNPJs do Tomador com as empresas registradas, proporcionando uma análise consistente dos dados.
+
+```py
+# Conexão com tabela empresas do banco
+df_empresas = modulos_empresas.df_empresas
+df_empresas = df_empresas.drop_duplicates(subset='cnpj', keep='first')
+df_empresas['cod_empresa'] = df_empresas['cod_empresa'].astype(int)
+df_empresas['cod_empresa'] = round(df_empresas['cod_empresa'])
+df_empresas['cod_empresa'] = df_empresas['cod_empresa'].astype(str)
+
+# Especifica o codigo da empresa
+df['Codigo Tomador'] = np.where(
+    df['CNPJ Tomador'].isin(df_empresas['cnpj']),
+    df['CNPJ Tomador'].map(df_empresas.set_index('cnpj')['cod_empresa']),
+    '-'
+)
+
+# Especifica a razao social da empresa
+df['Empresa Tomador'] = np.where(
+    df['CNPJ Tomador'].isin(df_empresas['cnpj']),
+    df['CNPJ Tomador'].map(df_empresas.set_index('cnpj')['empresa']),
+    '-'
+)
+```
+# 1.12 Coluna de Novos Nomes
+Visando também renomear os arquivos baseado no conteúdo das notas, o código contém uma função que baseada em condições, cria uma variável com um nome padrão para a nota, sendo o novo nome "Razão social do prestador + codigo do tomador + valor do serviço da nota". Essa função está localizada no módulo variaveis. 
+
+```py
+# Cria a coluna com o nome do arquivo alterado
+df['Arquivo_Nome_Alterado'] = df.apply(modulos_variaveis_v13.coluna_altera_nome4, axis=1)
+df['Arquivo_Nome_Alterado'] = df['Arquivo_Nome_Alterado'].apply(modulos_variaveis_v13.limpa_acento)
+df['Arquivo_Nome_Alterado'] = df['Arquivo_Nome_Alterado'].str.replace("'", '')
+df['Arquivo_Nome_Alterado'] = df['Arquivo_Nome_Alterado'].str.replace("@", '')
+df['Arquivo_Nome_Alterado'] = df['Arquivo_Nome_Alterado'].astype(str)
+df['Arquivo_Nome_Alterado'] = df['Arquivo_Nome_Alterado'].apply(unidecode)
+```
 
 Agora com a variável "texto_limpo", há 3 possibilidades:
 !!! example ""
@@ -267,23 +379,4 @@ Agora com a variável "texto_limpo", há 3 possibilidades:
 
 ![alt text](pdf1.jpg)
 
-Então para essas possibilidades o código fica da seguinte forma:
 
-```py
-elif any('Município de Uberlândia' in item for item in texto_limpo): 
-    modulos_variaveis.script_uberlandia_imagem(doc_pdf, caminho2, arquivo, df)
-
-elif texto == '\x0c' or '\x0c' in texto :
-    texto_imagem = modulos_ler_imagem.get_text_from_any_pdf(doc_pdf)
-    texto_imagem = texto_imagem.split('\n')
-    texto_imagem = [item.strip() for item in texto_imagem if item.strip() != '']
-
-    elif any('PREFEITURA MUNICIPAL DE BELEM' in item for item in texto_imagem):
-        modulos_variaveis.script_belem_imagem(texto_imagem, doc_pdf, caminho2, arquivo, df)
-
-```
-
-
-## Tema 2
-
-### Tema 3
