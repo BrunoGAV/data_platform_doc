@@ -68,7 +68,7 @@ lista_diretorios = [d1,d2]
 !!! example ""
 
     - **os.getenv**: recupera a variável do arquivo env
-    - **tabela_resposta**: contém o caminho de onde colocar o dataframe produzido no código
+    - **tabela_resposta**: contém o caminho de exportação do dataframe produzido no código
     - **lista_diretorios**: lista que guarda os caminhos das notas
 
 * Definindo no próprio código diretamente
@@ -79,7 +79,7 @@ tabela_resposta = r'C:\Users\usuario.nome\Pasta1\Pasta2\Notas_Comissoes\Resultad
 lista_diretorios = [d1,d2]
 ```
 
-A diferença entre as duas, é que a primeira torna o código mais limpo e organizado.
+A diferença é que a primeira torna o código mais limpo e organizado.
 
 &nbsp;
 ___
@@ -126,7 +126,7 @@ for item in lista_diretorios:
 ___
 
 ##### 1.4 Leitura da Nota
-Após essa etapa, invoco a função responsável pela leitura da nota "le_contrato" (esclarecida posteriormente), armazenando o resultado na variável "texto". Em seguida, o conteúdo passa por um processo de limpeza de espaçamentos e é armazenado na variável "texto_lista". Posteriormente, são removidos os valores vazios, transformando a variável em "texto_limpo". 
+Após essa etapa, invoco a função responsável pela leitura da nota "le_contrato" (esclarecida no tópico 3.0), armazenando o resultado na variável "texto". Em seguida, o conteúdo passa por um processo de limpeza de espaçamentos e é armazenado na variável "texto_lista". Posteriormente, são removidos os valores vazios, transformando a variável em "texto_limpo". 
 
 Dessa forma, temos agora a variável fundamental para todo o código, que contém o texto totalmente tratado e pronto para ser utilizado nas próximas etapas.
 
@@ -155,9 +155,9 @@ texto_lista = texto.split('\n')
 &nbsp;
 ___
 
-##### 1.5 Condicionais das prefeituras
+##### 1.5 Direcionamento de prefeitura
 
-Após a extração do texto da nota, a variável "texto_limpo" é submetida a várias condicionais com o objetivo de determinar a qual prefeitura ela se relaciona. Uma vez identificada a prefeitura específica, o script executa o processo de captura das variáveis pertinentes utilizando o módulo de variáveis, cujo funcionamento será detalhado posteriormente. 
+Após a extração do texto da nota, a variável "texto_limpo" é submetida a várias condicionais com o objetivo de determinar a qual prefeitura ela se relaciona. Uma vez identificada a prefeitura específica, o script executa o processo de captura das variáveis pertinentes utilizando o "modulo_variaveis", cujo funcionamento será detalhado posteriormente. 
 
 Esse conjunto de condicionais visa direcionar o fluxo do programa para a execução das etapas específicas associadas a cada prefeitura, garantindo uma abordagem personalizada e eficiente para cada caso.
 
@@ -178,7 +178,7 @@ elif any('Prefeitura do Município de Rio Branco' in item for item in texto_limp
 !!! example ""
 
     - **modulos_variaveis**: módulo que contém o direcionamento de cada prefeitura específica
-    - **modulos_variaveis.script_natal**: função que direciona a execução da função específica da prefeitura natal, contida no módulo variáveis
+    - **modulos_variaveis.script_natal**: função que direciona a execução da função específica da prefeitura natal, contida no "modulo_variaveis"
 
 &nbsp;
 ___
@@ -193,7 +193,7 @@ or '\n0' in texto :
 ```
 
 
-Nesse cenário, ao atender a essa condição, o código executa um processo para extrair os dados dessa imagem (explicado no tópico "módulo ler imagem"), e aloca o resultado na variável "texto_imagem".
+Nesse cenário, ao atender a essa condição, o código executa um processo para extrair os dados dessa imagem (explicado no tópico "modulo_ler_imagem"), e aloca o resultado na variável "texto_imagem".
 Assim, "texto imagem" que recebeu uma lista com o resultado da leitura da nota em imagem, passa por um processo de limpeza, eliminando caracteres vazios e linhas nulas.
 
 ```py
@@ -207,7 +207,7 @@ texto_imagem = [item.strip() for item in texto_imagem if item.strip() != '']
 
 !!! example ""
 
-    - **caminho**: caminho de localização do arquivo, que a função utiliza para fazer a leitura dessa nota específica
+    - **caminho**: caminho de localização do arquivo
 
 A partir deste ponto, o código continua a percorrer as condições subsequentes, verificando se o conteúdo se encaixa em alguma prefeitura específica.
 
@@ -228,7 +228,7 @@ elif any('PREFEITURA MUNICIPAL DE ANANINDEUA' in item for item in texto_imagem):
 !!! example ""
 
     - **modulos_variaveis**: módulo que contém o direcionamento de cada prefeitura específica
-    - **modulos_variaveis.script_uberaba_imagem**: função que direciona a execução da função específica da prefeitura de uberaba (em formato de imagem), contida no módulo variáveis
+    - **modulos_variaveis.script_uberaba_imagem**: função que direciona a execução da função específica da prefeitura de uberaba (em formato de imagem), contida no "modulo_variaveis"
 
 
 
