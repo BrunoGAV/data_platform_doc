@@ -1,12 +1,14 @@
 # Nota Fácil
 
 ## O que é?
-É um algoritmo estrutrado em liguagem Python, cujo objetivo é ler arquivos de notas fiscais (em pdf), extrair as informações principais do documento, como número da nota, valor líquido, data de emissão, CNPJ e Razão Social do prestador e do tomador de serviço, a fim de exportar todo o compilado das notas em forma de uma planilha no Excel.
+Trata-se de um algoritmo desenvolvido em Python, meticulosamente estruturado para processar arquivos de notas fiscais em formato PDF. O seu propósito é extrair as informações cruciais desses documentos, tais como número da nota, valor líquido, data de emissão, CNPJ e Razão Social tanto do prestador quanto do tomador de serviço. O resultado desse processo é então exportado e organizado em uma planilha do Excel, proporcionando um compilado abrangente e organizado das notas fiscais processadas.
+
+&nbsp;
 
 ## Ambiente
-Usar Anaconda
-Primeiramente, é preciso configurar o ambiente Python para conseguir executar o algoritmo. Como o scrtipt possui a funcionalidade de ler arquivos de extensão pdf, mas que não possuem texto selecionável, é necessária a instalação de dois pacotes: Tesseract e Poopler.
+Para garantir o funcionamento adequado do algoritmo, é recomendável utilizar o Python fornecido pelo Anaconda. Além disso, é necessário configurar a instalação de dois pacotes essenciais: Tesseract e Poopler para a leitura de imagens, conforme explicado detalhadamente no tópico 2.0. Essa configuração é crucial para garantir a eficiência e precisão do algoritmo, permitindo uma leitura eficaz das notas fiscais em formato PDF.
 
+&nbsp;
 
 ## Estrutra do algortimo
 O algoritmo é composto por 6 arquivos em Python, de forma modularizada:
@@ -23,8 +25,10 @@ O algoritmo é composto por 6 arquivos em Python, de forma modularizada:
 
     modulos_ler_imagem.py
 
+&nbsp;
+___
 
-### 1.0 Arquivo "leitura_NF.py"
+## 1.0 Arquivo "leitura_NF.py"
 Esse é o algoritmo que será executado para o processo de leitura rodar.
 
 Primeiramente, preparo ambiente para a exportação dos dados das notas. Assim, crio um DataFrame para alocar todas as variáveis escolhidas das notas, e algumas colunas de metadados.
@@ -48,6 +52,8 @@ df = pd.DataFrame(columns=['Numero NF', 'Data Emissao', 'Valor Bruto', 'CNPJ Pre
     - **Caminho Curto**: últimas 3 pastas do caminho original
     - **Arquivo**: nome do arquivo
 
+&nbsp;
+___
 
 #### 1.1 Entrada e saída de dados
 Há duas forma de definir o input e output dos arquivos nesse código:
@@ -75,6 +81,8 @@ lista_diretorios = [d1,d2]
 
 A diferença entre as duas, é que a primeira torna o código mais limpo e organizado.
 
+&nbsp;
+___
 
 #### 1.2 Contagem de arquivos
 Após estabelecer os diretórios, navego por cada pasta e contabilizo a quantidade total de arquivos presentes. Isso é feito com o propósito de criar um monitoramento que apresenta a porcentagem de notas lidas em relação ao total previamente definido. Esse acompanhamento visa proporcionar uma visão clara do progresso na leitura das notas em relação à meta estabelecida.
@@ -86,7 +94,8 @@ for i in lista_diretorios:
             for arquivo in arquivos:
                 qtd_arquivos += 1
 ```
-
+&nbsp;
+___
 
 #### 1.3 Criação do Loop
 Estabeleço um loop que percorre cada diretório da lista de diretórios, adentrando em cada pasta de cada diretório e examinando, posteriormente, cada arquivo contido em cada pasta. Durante esse processo, verifica-se se o arquivo possui a extensão .pdf. Caso positivo, são definidas duas variáveis essenciais: o caminho completo do arquivo (caminho) e o caminho relativo em relação ao diretório principal (caminho curto). Por fim, o script imprime o caminho completo do arquivo em questão.
@@ -113,6 +122,8 @@ for item in lista_diretorios:
     - **caminho**: caminho de localização do arquivo
     - **caminho_curto**: as três últimas pastas do caminho
 
+&nbsp;
+___
 
 ##### 1.4 Leitura da Nota
 Após essa etapa, invoco a função responsável pela leitura da nota "le_contrato" (esclarecida posteriormente), armazenando o resultado na variável "texto". Em seguida, o conteúdo passa por um processo de limpeza de espaçamentos e é armazenado na variável "texto_lista". Posteriormente, são removidos os valores vazios, transformando a variável em "texto_limpo". 
@@ -135,10 +146,14 @@ texto_lista = texto.split('\n')
     - **caminho**: caminho de localização do arquivo
     - **caminho_curto**: as três últimas pastas do caminho
 
-![alt text](texo.jpg)
+![](texto.jpg)
 
-![alt text](texo_limpo.jpg)
+&nbsp;
 
+![](texto_limpo.jpg)
+
+&nbsp;
+___
 
 ##### 1.5 Condicionais das prefeituras
 
@@ -160,10 +175,13 @@ elif any('Prefeitura do Município de Rio Branco' in item for item in texto_limp
     modulos_variaveis.script_rio_branco(texto_limpo, caminho, caminho_curto, arquivo, df)
 ```
 
-!!! example "**Atenção!**"
+!!! example ""
 
     - **modulos_variaveis**: módulo que contém o direcionamento de cada prefeitura específica
     - **modulos_variaveis.script_natal**: função que direciona a execução da função específica da prefeitura natal, contida no módulo variáveis
+
+&nbsp;
+___
 
 ##### 1.6 PDF com imagem
 Após passar por todas as condicionais de processamento dos textos relacionadas às prefeituras, o código realiza uma verificação final. Ele avalia se a variável "texto_limpo" contém os caracteres '\x0c' ou '\n0'. Se essa condição for satisfeita, indica que o texto é proveniente de uma nota em PDF não selecionável, como uma imagem de um print.
@@ -218,6 +236,8 @@ elif any('PREFEITURA MUNICIPAL DE ANANINDEUA' in item for item in texto_imagem):
     Por que algumas notas são em formato de PDF normal e outras em formato PDF com imagem?
     A variação no formato das notas em PDF ocorre devido ao processo descentralizado de geração, onde cada colaborador é responsável pela emissão de suas próprias notas. Durante esse processo, algumas notas são geradas de maneira não padrão, resultando em PDFs com texto não selecionável. 
 
+&nbsp;
+___
 
 ##### 1.7 Prefeitura não existente
 Após percorrer todas as condições relacionadas aos casos de texto e imagem, e não encontrar uma correspondência em nenhuma delas, a variável é redirecionada para a cláusula "else". Nesse ponto, o código tenta, pelo menos, extrair o nome da prefeitura associada ao novo caso.Se bem-sucedido, o nome da prefeitura é extraído, e as outras variáveis são configuradas como brancas. Em seguida, todas as variáveis são adicionadas a uma lista, que é inserida no dataframe.
@@ -256,6 +276,8 @@ df.loc[len(df)] = lista_variaveis
 
     - **df**: datafrane que está sendo construído durante o código
 
+&nbsp;
+___
 
 ##### 1.8 Tentativa e Erro
 Todo esse código que exerce sobre esse arquivo selecionado no loop de pastas, passa por um processo de tentativa e erro, utilizando o "try except". Dessa forma, mesmo que ocorra algum erro durante a execução, o algoritmo não irá travar. Nesse sentido, ele simplesmente irá entender aquela nota como erro, preencher a lista_variaveis com a palavra "erro" nas variáveis, e inseri-la nno dataframe.
@@ -275,6 +297,8 @@ except Exception as e:
     df.loc[len(df)] = lista_variaveis
 
 ```
+&nbsp;
+___
 
 ##### 1.9 Carregamento de leitura
 Para haver um acompanhamento da leitura, o algortimo expoe no terminal algumas informações:
@@ -301,6 +325,8 @@ for i in tqdm(list(range(1,len(df)+1)), total=qtd_arquivos,  unit="item", bar_fo
 
     - **qtd_arquivos**: quantidade total de arquivos, calculada na sessão "1.2 Contagem de arquivos"
 
+&nbsp;
+___
 
 ##### 1.10 Tratamento e Limpeza do DataFrame
 Após a criação do DataFrame, realiza-se ajustes para aprimorar a qualidade dos dados. Especificamente:
@@ -330,6 +356,8 @@ df['Valor Liquido'] = df['Valor Liquido'].str.replace(r'[a-zA-Z$]', '', regex=Tr
 df['Data Emissao'] = df['Data Emissao'].str.replace(r'-', '/', regex=True)
 df['Data Emissao'] = df['Data Emissao'].str.extract(r'(\d{2}/\d{2}/\d{4})', expand = False)
 ```
+&nbsp;
+___
 
 ##### 1.11 Validação do CNPJ
 Para validar a consistência dos CNPJs do Tomador nas notas fiscais em relação às empresas registradas no banco de dados, realizamos a extração da tabela de empresas do DW, situada no módulo empresas. Utilizando Python, efetuamos a limpeza e tratamento necessários na tabela de empresas para garantir a integridade dos dados. Em seguida, comparamos os CNPJs do Tomador nas notas fiscais com os CNPJs da tabela de empresas. 
@@ -358,7 +386,11 @@ df['Empresa Tomador'] = np.where(
     '-'
 )
 ```
-# 1.12 Coluna de Novos Nomes
+
+&nbsp;
+___
+
+##### 1.12 Coluna de Novos Nomes
 Com o intuito de padronizar os nomes dos arquivos de acordo com o conteúdo das notas fiscais, introduzimos uma coluna com um formato padrão: "Razão social do prestador + código do tomador + valor do serviço da nota". A criação dessa coluna é realizada invocando a função coluna_altera_nome do módulo variáveis. 
 
 Posteriormente, efetuamos uma limpeza na coluna, substituindo caracteres específicos e removendo acentos utilizando a função unidecode. Essa estratégia visa estabelecer uma identificação uniforme e descritiva para cada nota fiscal, facilitando a organização e referência dos arquivos
@@ -378,7 +410,11 @@ Depois, é chamada a função que renomeia o próprio arquivo, contida no modulo
 # Renomeia os arquivos
 modulos_renomear.renomeia(df)
 ```
-##### Exportação do Resultado
+
+&nbsp;
+___
+
+##### 1.13 Exportação do Resultado
 
 Durante o tratamento do dataframe já feito, utiliza-se alguns comandos de exportação dessa tabela para o Excel, com o intuito de garantir que, mesmo que o código dê algum erro no final, seja possível exportar a tabela, mesmo sem tratamento
 
@@ -392,7 +428,10 @@ Mas no fim do código, exporta-se o dataframe pelo caminho de retorno indicado n
 df.to_excel(tabela_resposta, index=False)
 ```
 
-##### Contagem do Tempo
+&nbsp;
+___
+
+##### 1.14 Contagem do Tempo
 Por fim, é exposto no terminal o tempo total da leitura das notas.
 
 ```py
@@ -403,13 +442,6 @@ print('exportado para excel')
 print('Tempo total', tempo_total, 'minutos')
 ```
 
-
-Agora com a variável "texto_limpo", há 3 possibilidades:
-!!! example ""
-    - **1**) Se o nome da "prefeitura X" estiver no texto_limpo, então será executado o script da prefeitura X.
-    - **2**) Se o texto_limpo conter nenhuma palavra, ou seja, o PDF está não selecionável, como uma imagem, então vou tratar a imagem, extrair o texto da imagem e verificar se a prefeitura X está no texto, para executar o script da prefeitura correta.
-    - **3**) O texto_limpo não contém nenhum nome de prefeitura que tenho registro, logo na planilha do Excel vai conter esse arquivo com a informação "não_achado".
-
-![alt text](pdf1.jpg)
+![alt text](texto.jpg)
 
 
