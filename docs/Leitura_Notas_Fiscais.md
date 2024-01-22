@@ -569,6 +569,69 @@ def le_contrato(caminho):
     - **caminho**: caminho de localização do arquivo
 Dessa forma, é retornada a variável output_string, que no arquivo leitura_NF.py, irá ser chamada.
 
+&nbsp;
+___
+
+#### 2.5 Função alteração nome de coluna
+
+Uma utilidade do algoritmo é criar uma coluna no dataframe com o novo nome de alteração do arquivo, um nome padronizado com 'razao social do prestador_codigo da empresa_valor da nota'.
+
+Esta função, `coluna_altera_nome`, tem como objetivo criar uma nova coluna em um DataFrame, contendo nomes de arquivos padronizados. O novo nome é formado pela combinação de três colunas específicas do DataFrame: "Razao Social Prestador", "Codigo Tomador", e "Valor Liquido". 
+
+No entanto, o novo nome só é gerado se os valores dessas colunas atenderem a critérios específicos, incluindo a verificação de certos valores indesejados e limites de caracteres. Se os critérios são satisfeitos, a função retorna o novo nome; caso contrário, retorna o valor original da coluna "Arquivo". Em situações excepcionais, a função pode retornar "Excedeu_Caracter" se o novo nome ultrapassar o limite de caracteres ou "Nao" em caso de exceção.
+
+```py
+def coluna_altera_nome(row):
+    # Obtém os valores das colunas relevantes do DataFrame
+    prestador = row['Razao Social Prestador']
+    tomador = row['Codigo Tomador']
+    valor = row['Valor Liquido']
+    arquivo = row['Arquivo']
+
+    try:
+        # Verifica se os valores atendem aos critérios para a criação de um novo nome
+        if (prestador is not None and prestador.strip()) and prestador not in ['erro'] and prestador != 'nao_achado' and \
+            tomador != '-' and \
+            (valor is not None and valor.strip()) and valor not in ['erro'] and valor != 'nao_achado' and valor != '_':
+            
+            # Cria um novo nome conforme o padrão estabelecido
+            novo_nome = prestador + '__EMP' + tomador + '__' + str(valor) + '.pdf'
+            
+            # Verifica se o novo nome não excede o limite de 256 caracteres
+            if len(novo_nome) <= 256:
+                return novo_nome
+            else:
+                # Retorna um indicativo caso o novo nome exceda o limite de caracteres
+                return 'Excedeu_Caracter'
+        else:
+            # Se os critérios não forem atendidos, retorna o valor original da coluna 'Arquivo'
+            return arquivo
+    except:
+        # Retorna 'Nao' em caso de exceção
+        return 'Nao'
+
+```
+!!! example ""
+    - **row**: linha do DataFrame
+
+&nbsp;
+___
+
+#### 2.6 Função limpa acento
+
+Esta função, `limpa_acento`, tem como objetivo remover caracteres epeciais e acentos.
+
+```py
+def limpa_acento(texto):
+    try:
+        return unidecode(str(texto))
+    except:
+        return texto
+```
+
+!!! example ""
+    - **texto**: entrada do texto que se deseja limpar
+
 ## 3.0 Arquivo "modulos_prefeituras.py"
 
 ## 4.0 Arquivo "modulos_renomeia.py"
