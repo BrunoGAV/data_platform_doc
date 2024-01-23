@@ -757,6 +757,67 @@ ___
 
 ## 4.0 Arquivo "modulos_renomeia.py"
 
+Este script foi desenvolvido com o propósito de renomear cada arquivo de nota fiscal de acordo com os nomes indicados na coluna 'Arquivo_Nome_Alterado', mencionada no tópico 1.12.
+
+A função `renomeia` (chamada no arquivo leitura_nf.py) emprega um loop para percorrer as linhas de um DataFrame (df) contendo informações sobre arquivos. Em cada iteração, o código obtém o caminho e o nome do arquivo antigo, e então cria um novo caminho com base no nome alterado e um apelido correspondente. O objetivo principal é renomear os arquivos e atualizar as informações associadas no DataFrame.
+
+Ao tentar efetuar a renomeação, o código utiliza blocos `try` e `except` para lidar com exceções. Se a renomeação for bem-sucedida, as informações no DataFrame são atualizadas. Em caso de falha, o código tenta realizar uma limpeza nos nomes, utilizando a biblioteca `unidecode` para remover caracteres especiais e acentos. Se essa tentativa de limpeza também resultar em erro, o código mantém as informações originais no DataFrame.
+
+Essa estratégia abrangente permite que o código prossiga mesmo diante de possíveis problemas durante o processo de renomeação, garantindo robustez na execução do script.
+
+
+```py
+import os
+from unidecode import unidecode
+
+def renomeia(df):
+    # Itera sobre as linhas do DataFrame
+    for index, linha in df.iterrows():
+        print('\n')
+        
+        # Obtém o caminho antigo e o nome do arquivo antigo
+        antigo_caminho = linha['Caminho']
+        antigo_caminho = antigo_caminho.replace('\\', '/')
+        ultima_barra = antigo_caminho.rfind('/')
+        antigo_nome = antigo_caminho[ultima_barra:].replace('/','')
+        
+        # Gera o novo caminho com base no nome alterado
+        novo_caminho = antigo_caminho
+        ultima_barra = novo_caminho.rfind('/')
+        novo_caminho = novo_caminho[:ultima_barra]
+        novo_caminho = novo_caminho + '/' + linha['Arquivo_Nome_Alterado']
+
+        # Gera um apelido para o novo caminho
+        novo_apelido = novo_caminho[ultima_barra:].replace('/','')
+
+        try:
+            # Tenta renomear o arquivo e atualizar informações no DataFrame
+            os.rename(antigo_caminho, novo_caminho)
+            df.at[index, 'Novo_Caminho'] = str(novo_caminho).replace('/', '\\')
+            df.at[index, 'Arquivo_Nome_Alterado'] = novo_apelido
+        except Exception as e:
+            try:
+                # Se ocorrer uma exceção, tenta limpar o nome antigo usando unidecode
+                antigo_nome_limpo = unidecode(antigo_nome)
+                antigo_caminho_limpo = unidecode(antigo_caminho)
+
+                # Atualiza informações no DataFrame
+                df.at[index, 'Arquivo_Nome_Alterado'] = antigo_nome_limpo
+                df.at[index, 'Novo_Caminho'] = str(antigo_caminho_limpo).replace('/', '\\')
+                os.rename(antigo_caminho, antigo_caminho_limpo)
+            except:
+                # Se a limpeza também falhar, mantém as informações originais no DataFrame
+                df.at[index, 'Novo_Caminho'] = linha['Caminho']
+                df.at[index, 'Arquivo_Nome_Alterado'] = antigo_nome
+                pass
+            pass
+
+print('Notas renomeadas com sucesso!')
+```
+
+!!! example ""
+    - **df**: datafrane que está sendo construído durante o código
+
 ## 5.0 Arquivo "modulos_empresas.py"
 
 ## 6.0 Arquivo "modulos_ler_imagem.py"
