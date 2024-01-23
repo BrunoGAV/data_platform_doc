@@ -820,4 +820,48 @@ print('Notas renomeadas com sucesso!')
 
 ## 5.0 Arquivo "modulos_empresas.py"
 
+Este script foi criado com o intuito de estabelecer uma conexão com o banco de dados, realizar a extração da tabela "empresas" do data warehouse (dw) e disponibilizar esses dados para serem utilizados no script de leitura de notas fiscais (tópico 1.11 - Validação do CNPJ).
+
+```py
+from sqlalchemy import create_engine
+import pandas as pd
+import psycopg2
+import sqlalchemy
+
+
+usuario = 'usuario'
+senha = 'senha'
+host = 'host'
+porta = '123'
+banco = 'dw'
+
+engine = create_engine(f'postgresql://{usuario}:{senha}@{host}:{porta}/{banco}')
+
+
+try:
+    with engine.connect() as conn:
+    
+        print("Conexão com o banco de dados estabelecida com sucesso.")
+
+        # Seu código para manipular o banco de dados
+        query = "select cod_empresa, empresa , cnpj from corporativo.empresas e "
+        global df_empresas
+        df_empresas = pd.read_sql_query(query, engine)
+
+        print('Dados carregados com sucesso')
+
+
+except Exception as e:
+    print("Erro detectado", e)
+
+finally:
+    # Fechar a conexão com o banco de dados (se ainda estiver aberta)
+    if conn:
+        conn.close()
+        print('Conexão fechada.')
+
+print(df_empresas)
+print(len(df_empresas))
+```
+
 ## 6.0 Arquivo "modulos_ler_imagem.py"
