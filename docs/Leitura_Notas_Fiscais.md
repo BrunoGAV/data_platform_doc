@@ -632,7 +632,128 @@ def limpa_acento(texto):
 !!! example ""
     - **texto**: entrada do texto que se deseja limpar
 
+&nbsp;
+___
+
 ## 3.0 Arquivo "modulos_prefeituras.py"
+O propósito deste arquivo é criar um script dedicado para cada prefeitura, com o objetivo de extrair informações cruciais de notas fiscais. As variáveis de interesse incluem o número da nota, a data de emissão, o valor bruto, a razão social, o CNPJ dos prestadores e tomadores de serviço, além do nome da prefeitura (local de prestação do serviço).
+
+Cada script específico para uma prefeitura é definido como uma função, onde um loop `for` é empregado para percorrer todas as linhas do texto da nota. Dentro desse loop, há a busca por palavras-chave específicas. Ao encontrar uma correspondência, o script captura o valor associado e armazena-o em uma variável. Isso permite a extração eficiente de cada variável relevante do texto da nota fiscal.
+
+Em alguns casos, ao invés de buscar por uma palavra-chave específica como "data de emissão", o script adota a abordagem de percorrer todo o texto em busca de padrões, como "dd/mm/aaaa". Essa estratégia é aplicada de maneira semelhante para a identificação de CNPJ.
+
+É importante ressaltar que tanto notas no formato de imagem quanto em PDF possuem funções específicas para cada prefeitura, e estas fornecem a variável que armazena o texto da nota como entrada para a função.
+
+As variáveis extraídas, contendo as informações relevantes, são consolidadas em uma lista. Essa lista é criada no módulo_variaveis, conforme detalhado no tópico 2.0, e posteriormente é utilizada para alimentar um dataframe. Essa abordagem possibilita a organização e estruturação eficiente das informações extraídas das notas fiscais.
+
+```py
+def pref_goncalves(texto_imagem):
+    global prefeitura, num_nf, data_emissao, vlr_liquido, razao_prestador, razao_tomador, cpf, cnpj_prestador, cnpj_tomador
+
+    # PREFEITURA
+    prefeitura = 'PREFEITURA MUNICIPAL DE GOLCALVEZ DIAS'
+
+    # extrair NUMERO NOTA FISCAL
+    for indice, item in enumerate(texto_imagem):
+        if 'numero da nota' in item.lower():
+            num_nf = texto_imagem[indice+1]
+            break
+        else:
+            num_nf = 'nao_achado'
+
+
+    # extrair DATA EMISSAO 
+    padrao = r'\d{2}/\d{2}/\d{4}'
+    posicoes = []
+    for elemento in texto_imagem:
+        match = re.search(padrao, elemento)
+        if match:
+            posicoes.append(match.group())
+        else:
+            data_emissao = 'nao_achado'
+
+    data_emissao = posicoes[0]
+
+
+    # extrair VALOR LÍQUIDO
+    for indice, item in enumerate(texto_imagem):
+        if 'liquido' in item.lower():
+            vlr_liquido = texto_imagem[indice+1]
+            break
+        else:
+            vlr_liquido = 'nao_achado'
+
+    if ' ' in vlr_liquido:
+        vlr_liquido = vlr_liquido.split(' ')[-1].strip()
+
+
+    # extrair RAZÃO
+    posicoes = []
+    for indice, item in enumerate(texto_imagem):
+        if 'social' in item.lower():
+            posicoes.append(indice)
+        else:
+            razao_prestador = 'nao_achado'
+            razao_tomador = 'nao_achado'
+
+    razao_prestador = texto_imagem[posicoes[0]+1]
+    if ':' in razao_prestador:
+        razao_prestador = razao_prestador.split(':')[-1].strip()
+
+    razao_tomador = texto_imagem[posicoes[1]+1]
+    if ':' in razao_tomador:
+        razao_tomador = razao_tomador.split(':')[-1].strip()
+
+
+    # extrair CPF
+    posicoes = []
+    for indice, item in enumerate(texto_imagem):
+        if 'cpf' in item.lower():
+            posicoes.append(indice)
+        else:
+            cnpj_prestador = 'nao_achado'
+            cnpj_tomador = 'nao_achado'
+
+    padrao = r'\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}'
+
+    cnpj_prestador = texto_imagem[posicoes[0]+1]
+    if not re.findall(padrao, cnpj_prestador):
+        cnpj_prestador = cnpj_prestador
+    else:
+        cnpj_prestador = re.findall(padrao, cnpj_prestador)[0]
+
+    cnpj_tomador = texto_imagem[posicoes[1]+1]
+    if not re.findall(padrao, cnpj_tomador):
+        cnpj_tomador = cnpj_tomador
+    else:
+        cnpj_tomador = re.findall(padrao, cnpj_tomador)[0]
+```
+
+&nbsp;
+
+!!! tip "Nota"
+    *Por que não se usa apenas uma função prefeitura para extrair as variáveis de todas as notas?*
+
+    A escolha de utilizar funções específicas para cada prefeitura, em vez de uma função única para todas as notas, se deve à natureza única do formato de texto extraído de cada prefeitura específica. Cada prefeitura pode adotar um formato único de nota fiscal, resultando em diferenças nos nomes das palavras-chave relevantes e nas posições dessas palavras-chave no texto. Por isso é uma função para a prefeitura de Natal, outra para a prefeitura de Gonçalves Dias, outra para Goiânia e assim por diante.
+
+    Por exemplo, o termo que representa o "Valor Bruto" em uma nota da prefeitura X pode ser diferente de outra nota da prefeitura Y, podendo ser "Valor Total" ou "Valor dos Serviços". Além disso, as posições dessas palavras-chave e dos valores associados podem variar.
+
+    Mesmo para notas emitidas pela mesma prefeitura, as variações na formatação dos PDFs e suas dimensões podem influenciar a qualidade do texto extraído, resultando em diferenças nas posições das palavras-chave. Por isso, usando o exemplo da prefeitura da cidade de Olimpia, há duas funções diferentes ensse módulo: pref_olimpia e pref_olimpia2.
+
+    Assim, a abordagem de ter funções específicas para cada prefeitura permite lidar de maneira mais flexível com essas variações, garantindo a precisão na extração das variáveis, mesmo em cenários onde os formatos das notas podem ser distintos.
+
+&nbsp;
+
+Um ponto extremamente positivo é que, atualmente, foi estabelecido um padrão para notas fiscais do tipo MEI, abrangendo cerca de 50% das notas que seguem esse formato padronizado. Nesse contexto, destaca-se a função pref_danfse, especialmente desenvolvida para esse tipo específico de nota. Essa função demonstra uma leitura de alta qualidade e uma extração de variáveis bastante precisa.
+
+No módulo_prefeituras, foram implementadas quatro funções dedicadas ao processamento de notas fiscais do tipo MEI. A necessidade de quatro funções distintas surge de possíveis variações nas dimensões do papel da nota durante a emissão, o que demanda um reconhecimento específico para cada cenário.
+
+Essa abordagem permite uma extração eficiente e acurada de informações, contribuindo para o sucesso na interpretação e manipulação das notas fiscais MEI, mesmo diante de possíveis variações nas suas características físicas.
+
+&nbsp;
+___
+
+<img src="texto.jpg" width="800" height="400">
 
 ## 4.0 Arquivo "modulos_renomeia.py"
 
