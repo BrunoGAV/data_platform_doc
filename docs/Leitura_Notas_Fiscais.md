@@ -865,3 +865,74 @@ print(len(df_empresas))
 ```
 
 ## 6.0 Arquivo "modulos_ler_imagem.py"
+
+### 6.1 Configura ambiente
+
+Antes de iniciar a leitura de arquivos PDF que aparentam como imagens, é necessário configurar o ambiente. Siga os passos abaixo:
+
+**6.1.1 Instale o pdf2image via terminal do Python:**
+
+```py
+    pip install pdf2image
+```
+
+**6.1.2 Instalar Poopler na máquina:**
+
+Poppler é um utilitário para renderizar PDFs e é comum em sistemas Linux, mas não em Windows. Então, naturalmente, se for preciso usar o Poppler e seus pacotes associados, é necessário preencher essa lacuna instalando uma extensão dele compartilhada no GitHub:
+
+* Baixe o Poopler [aqui](https://github.com/oschwartz10612/poppler-windows/releases/) (pacote .zip com a última versão)
+* Extraia o conteúdo do arquivo .zip e acesse a pasta Library
+* Dentro dela, acesse a pasta Bin e copie o caminho do diretório
+
+**6.1.3 Instalar o Teresseract:**
+
+* Baixe o Tesseract-OCR [aqui](https://tesseract-ocr.github.io/tessdoc/Installation.html)
+* Crie a variável de ambiente
+* Crie a variável no arquivo python: 
+
+ `pytesseract.pytesseract.tesseract_cmd = r'C:\Users\name\...\Local\Tesseract-OCR\tesseract.exe'`
+
+**6.1.4 Instalação resumida**
+
+Dentro da pasta que contém o algoritmo de leitura das notas, encontra-se uma pasta chamada "Ambiente", onde os programas Poopler e Tesseract já estão instalados. No código ler_imagem.py, basta definir as variáveis abaixo, apontando para a pasta de ambiente configurada:
+
+`tess.pytesseract.tesseract_cmd =  'Ambiente_Python/Tesseract-OCR/tesseract.exe'`
+
+`poppler_path = 'Ambiente_Python/poppler-23.08.0/Library/bin'`
+
+___
+
+### 6.2 Leitura de imagem
+
+```py
+from pdf2image import convert_from_path
+import pytesseract as tess
+from pytesseract import image_to_string
+import matplotlib.pyplot as plt
+from PIL import Image
+global final_text
+
+tess.pytesseract.tesseract_cmd =  'Ambiente_Python/Tesseract-OCR/tesseract.exe'
+poppler_path = 'Ambiente_Python/poppler-23.08.0/Library/bin'
+
+def convert_pdf_to_img(pdf_file):
+    return convert_from_path(pdf_file, dpi = 500, poppler_path = poppler_path)
+
+def convert_image_to_text(file):
+    text = image_to_string(file)
+    return text
+
+def get_text_from_any_pdf(pdf_file):
+    images = convert_pdf_to_img(pdf_file)
+    global final_text
+    final_text = ''
+    for pg, img in enumerate(images):
+        final_text += convert_image_to_text(img)
+    return final_text
+```
+
+Este código Python tem como objetivo realizar a extração de texto de arquivos PDF que se apresentam como imagens, utilizando as bibliotecas pdf2image e Tesseract OCR. 
+
+Inicialmente, são configurados os caminhos para os executáveis do Tesseract OCR e do Poopler no ambiente. Em seguida, a função `convert_pdf_to_img` utiliza a biblioteca `pdf2image` para transformar um arquivo PDF em uma lista de imagens, com uma resolução de 500 dpi e o caminho específico do Poopler. A função `convert_image_to_text` emprega o Tesseract OCR para converter uma imagem em texto, utilizando como entrada o arquivo de imagem gerado pela função anterior.
+
+A função final, `get_text_from_any_pdf`, combina essas etapas para extrair texto de qualquer arquivo PDF. Ela itera sobre as páginas do documento, acumulando o texto extraído, e o resultado final é armazenado na variável `final_text`. Esse conjunto de operações atende à necessidade de processar PDFs que não possuem texto selecionável, empregando técnicas de reconhecimento óptico de caracteres para interpretar documentos tratados como imagens.
