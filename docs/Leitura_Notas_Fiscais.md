@@ -31,7 +31,7 @@ ___
 ## 1.0 Arquivo "leitura_NF.py"
 Esse é o algoritmo que será executado para o processo de leitura rodar.
 
-Primeiramente, preparo ambiente para a exportação dos dados das notas. Assim, crio um DataFrame para alocar todas as variáveis escolhidas das notas, e algumas colunas de metadados.
+Primeiramente, prepara-se o ambiente para a exportação dos dados das notas, criando um DataFrame para alocar todas as variáveis escolhidas das notas, e algumas colunas de metadados.
 
 ```py
 df = pd.DataFrame(columns=['Numero NF', 'Data Emissao', 'Valor Bruto', 'CNPJ Prestador', 'CNPJ Tomador', 'Razao Social Prestador','Razao Social Tomador', 'Prefeitura', 'Script','Caminho', 'Caminho Curto', 'Arquivo'])
@@ -57,7 +57,7 @@ ___
 #### 1.1 Entrada e saída de dados
 Há duas forma de definir o input e output dos arquivos nesse código:
 
-* Em formato de variável, importando as variáveis de caminho de entrada e saída de um arquivo .env. Assim, também crio uma lista com os diretórios de input.
+* Em formato de variável, importando as variáveis de caminho de entrada e saída de um arquivo .env e alocando-as em uma lista com os diretórios de input.
 ```py 
 d1 = os.getenv('CAMINHO_NF')
 d2 = os.getenv('CAMINHO_NF_TLK')
@@ -83,7 +83,7 @@ A diferença é que a primeira torna o código mais limpo e organizado.
 ___
 
 #### 1.2 Contagem de arquivos
-Após estabelecer os diretórios, navego por cada pasta e contabilizo a quantidade total de arquivos presentes. Isso é feito com o propósito de criar um monitoramento que apresenta a porcentagem de notas lidas em relação ao total previamente definido. Esse acompanhamento visa proporcionar uma visão clara do progresso na leitura das notas em relação à meta estabelecida.
+Após estabelecer os diretórios, o algoritmo navega por cada pasta e contabilizo a quantidade total de arquivos presentes. Isso é feito com o propósito de criar um monitoramento que apresenta a porcentagem de notas lidas em relação ao total previamente definido. Esse acompanhamento visa proporcionar uma visão clara do progresso na leitura das notas em relação à meta estabelecida.
 
 ```py
 qtd_arquivos = 0
@@ -96,7 +96,7 @@ for i in lista_diretorios:
 ___
 
 #### 1.3 Criação do Loop
-Estabeleço um loop que percorre cada diretório da lista de diretórios, adentrando em cada pasta de cada diretório e examinando, posteriormente, cada arquivo contido em cada pasta. Durante esse processo, verifica-se se o arquivo possui a extensão .pdf. Caso positivo, são definidas duas variáveis essenciais: o caminho completo do arquivo (caminho) e o caminho relativo em relação ao diretório principal (caminho curto). Por fim, o script imprime o caminho completo do arquivo em questão.
+O loop estabelecido percorre cada diretório da lista de diretórios, adentrando em cada pasta e examinando, posteriormente, cada arquivo. Durante esse processo, verifica se o arquivo possui a extensão .pdf. Caso positivo, são definidas duas variáveis essenciais: o caminho completo do arquivo (caminho) e o caminho relativo em relação ao diretório principal (caminho curto). Por fim, o script imprime o caminho completo do arquivo em questão.
 
 ``` py
 posicao = 0
@@ -122,8 +122,8 @@ for item in lista_diretorios:
 &nbsp;
 ___
 
-##### 1.4 Leitura da Nota
-Após essa etapa, invoco a função responsável pela leitura da nota "le_contrato" (esclarecida no tópico 3.0), armazenando o resultado na variável "texto". Em seguida, o conteúdo passa por um processo de limpeza de espaçamentos e é armazenado na variável "texto_lista". Posteriormente, são removidos os valores vazios, transformando a variável em "texto_limpo". 
+##### 1.3.1 Leitura da Nota
+Após essa etapa, chama-se a função `le_contrato` responsável pela leitura da nota (esclarecida no tópico 3.0), armazenando o resultado na variável "texto". Em seguida, o conteúdo passa por um processo de remoção do caracter "\n0" e é armazenado na variável "texto_lista". Posteriormente, são removidos os valores vazios, transformando a variável em "texto_limpo". 
 
 Dessa forma, temos agora a variável fundamental para todo o código, que contém o texto totalmente tratado e pronto para ser utilizado nas próximas etapas.
 
@@ -151,35 +151,34 @@ texto_lista = texto.split('\n')
 &nbsp;
 ___
 
-##### 1.5 Direcionamento de prefeitura
+##### 1.3.2 Direcionamento de prefeitura
 
-Após a extração do texto da nota, a variável "texto_limpo" é submetida a várias condicionais com o objetivo de determinar a qual prefeitura ela se relaciona. Uma vez identificada a prefeitura específica, o script executa o processo de captura das variáveis pertinentes utilizando o "modulo_variaveis", cujo funcionamento será detalhado posteriormente. 
+Após a extração do texto da nota, a variável "texto_limpo" é submetida a várias condicionais com o objetivo de determinar a qual prefeitura ela se relaciona. Uma vez identificada a prefeitura específica, o script executa o processo de captura das variáveis pertinentes utilizando o "modulos_prefeitura". 
 
 Esse conjunto de condicionais visa direcionar o fluxo do programa para a execução das etapas específicas associadas a cada prefeitura, garantindo uma abordagem personalizada e eficiente para cada caso.
 
 ```py
 # PREFEITURA DE NATAL
 elif any('Prefeitura Municipal do Natal' in item for item in texto_limpo):
-    modulos_variaveis.script_natal(texto_limpo, caminho, caminho_curto, arquivo, df)
+    modulos_prefeitura.pref_natal(texto_limpo, caminho, caminho_curto, arquivo, df)
 
 # PREFEITURA DE MANAUS
 elif any('PREFEITURA DE MANAUS' in item for item in texto_limpo):
-    modulos_variaveis.script_manaus(texto_limpo, caminho, caminho_curto, arquivo, df)
+    modulos_prefeitura.pref_manaus(texto_limpo, caminho, caminho_curto, arquivo, df)
 
 # PREFEITURA DE RIO BRANCO
 elif any('Prefeitura do Município de Rio Branco' in item for item in texto_limpo):
-    modulos_variaveis.script_rio_branco(texto_limpo, caminho, caminho_curto, arquivo, df)
+    modulos_prefeitura.pref_rio_branco(texto_limpo, caminho, caminho_curto, arquivo, df)
 ```
 
 !!! example ""
-    - **modulos_variaveis**: módulo que contém o direcionamento de cada prefeitura específica
-    - **modulos_variaveis.script_natal**: função que direciona a execução da função específica da prefeitura natal, contida no "modulo_variaveis"
+    - **modulos_prefeitura**: módulo que contém o direcionamento de cada prefeitura específica
 
 &nbsp;
 ___
 
-##### 1.6 PDF com imagem
-Após passar por todas as condicionais de processamento dos textos relacionadas às prefeituras, o código realiza uma verificação final. Ele avalia se a variável "texto_limpo" contém os caracteres '\x0c' ou '\n0'. Se essa condição for satisfeita, indica que o texto é proveniente de uma nota em PDF não selecionável, como uma imagem de um print.
+##### 1.3.3 PDF com imagem
+Após passar por todas as condicionais de processamento dos textos relacionadas às prefeituras, o código realiza uma verificação final. Ele avalia se a variável "texto" contém os caracteres '\x0c' ou '\n0'. Se essa condição for satisfeita, indica que o texto é proveniente de uma nota em PDF não selecionável, como uma imagem de um print.
 
 ```py
 elif texto == '\x0c' \
@@ -208,21 +207,20 @@ A partir deste ponto, o código continua a percorrer as condições subsequentes
 ```py
 # PREFEITURA DE UBERABA IMAGEM
 elif any('PREFEITURA MUNICIPAL DE UBERABA' in item for item in texto_imagem):
-    modulos_variaveis.script_uberaba_imagem(texto_imagem, caminho, caminho_curto, arquivo, df)
+    modulos_prefeitura.pref_uberaba_imagem(texto_imagem, caminho, caminho_curto, arquivo, df)
 
 # PREFEITURA DE BELÉM IMAGEM
 elif any('PREFEITURA MUNICIPAL DE BELEM' in item for item in texto_imagem):
-    modulos_variaveis.script_belem_imagem(texto_imagem, caminho, caminho_curto, arquivo, df)
+    modulos_prefeitura.pref_belem_imagem(texto_imagem, caminho, caminho_curto, arquivo, df)
 
 # PREFEITURA DE ANANINDEUA IMAGEM
 elif any('PREFEITURA MUNICIPAL DE ANANINDEUA' in item for item in texto_imagem):
-    modulos_variaveis.script_ananindeua_imagem(texto_imagem, caminho, caminho_curto, arquivo, df)
+    modulos_prefeitura.pref_ananindeua_imagem(texto_imagem, caminho, caminho_curto, arquivo, df)
 ```
 
 !!! example ""
 
-    - **modulos_variaveis**: módulo que contém o direcionamento de cada prefeitura específica
-    - **modulos_variaveis.script_uberaba_imagem**: função que direciona a execução da função específica da prefeitura de uberaba (em formato de imagem), contida no "modulo_variaveis"
+    - **modulos_prefeitura**: módulo que contém o direcionamento de cada prefeitura específica
 
 
 
@@ -233,38 +231,39 @@ elif any('PREFEITURA MUNICIPAL DE ANANINDEUA' in item for item in texto_imagem):
 &nbsp;
 ___
 
-##### 1.7 Prefeitura não existente
-Após percorrer todas as condições relacionadas aos casos de texto e imagem, e não encontrar uma correspondência em nenhuma delas, a variável é redirecionada para a cláusula "else". Nesse ponto, o código tenta, pelo menos, extrair o nome da prefeitura associada ao novo caso.Se bem-sucedido, o nome da prefeitura é extraído, e as outras variáveis são configuradas como brancas. Em seguida, todas as variáveis são adicionadas a uma lista, que é inserida no dataframe.
+##### 1.3.4 Prefeitura não existente
+Após percorrer todas as condições relacionadas aos casos de texto e imagem, e não encontrar uma correspondência em nenhuma delas, a variável é redirecionada para a cláusula "else". Nesse ponto, o código tenta, pelo menos, extrair o nome da prefeitura associada ao novo caso. Se bem-sucedido, o nome da prefeitura é extraído, e as outras variáveis são configuradas como brancas. Em seguida, todas as variáveis são adicionadas a uma lista, que é inserida no dataframe.
 
-No caso de não ser possível extrair o nome da prefeitura, a variável fica com o valor "nao_achado", e, juntamente com as outras variáveis em branco, uma lista é criada e inserida como uma nova linha no dataframe. Nesse caso, a variável script, que contém qual script da variável modulo_variaveis foi ativado, fica com o valor "sem_codigo". 
+No caso de não ser possível extrair o nome da prefeitura, as variáveis ficam com o valor "nao_localizado", e, são inseridas como uma nova linha no dataframe.
 
 Essa abordagem permite lidar de maneira flexível com situações não previamente mapeadas, buscando ao menos identificar o nome da prefeitura mesmo quando a estrutura do documento não segue os padrões conhecidos.
 
 ```py
 else:
-for indice, item in enumerate(texto_imagem):
-    if 'prefeitura' in item.lower() or 'município' in item.lower():
-        prefeitura = texto_imagem[indice]
-        break
-    else:
-        prefeitura = 'nao_achado'
+    for indice, item in enumerate(texto_imagem):
+        if 'prefeitura' in item.lower() or 'município' in item.lower():
+            prefeitura = texto_imagem[indice]
+            break
+        else:
+            prefeitura = 'nao_localizado'
 
-num_nf = ''
-data_emissao = ''
-vlr_liquido = '' 
-cnpj_prestador = ''
-cnpj_tomador = ''
-razao_prestador = ''
-razao_tomador = ''
-script = 'sem_codigo'
+    num_nf = 'nao_localizado'
+    data_emissao = 'nao_localizado'
+    vlr_liquido = 'nao_localizado' 
+    cnpj_prestador = 'nao_localizado'
+    cnpj_tomador = 'nao_localizado'
+    razao_prestador = 'nao_localizado'
+    razao_tomador = 'nao_localizado'
+    script = 'nao_localizado'
 
-lista_variaveis = [num_nf,data_emissao, vlr_liquido, 
-                cnpj_prestador, cnpj_tomador, 
-                razao_prestador, razao_tomador, 
-                prefeitura, script, caminho, caminho_curto, arquivo]
+    lista_variaveis = [num_nf,data_emissao, vlr_liquido, 
+                    cnpj_prestador, cnpj_tomador, 
+                    razao_prestador, razao_tomador, 
+                    prefeitura, script, caminho, caminho_curto, arquivo]
 
-# Inserção da lista no DataFrame
-df.loc[len(df)] = lista_variaveis
+    # Inserção da lista no DataFrame
+    df.loc[len(df)] = lista_variaveis
+    
 ```
 !!! example ""
     - **df**: datafrane que está sendo construído durante o código
@@ -272,8 +271,8 @@ df.loc[len(df)] = lista_variaveis
 &nbsp;
 ___
 
-##### 1.8 Tentativa e Erro
-Todo esse código que exerce sobre esse arquivo selecionado no loop de pastas, passa por um processo de tentativa e erro, utilizando o "try except". Dessa forma, mesmo que ocorra algum erro durante a execução, o algoritmo não irá travar. Nesse sentido, ele simplesmente irá entender aquela nota como erro, preencher a lista_variaveis com a palavra "erro" nas variáveis, e inseri-la nno dataframe.
+#### 1.4 Tentativa e Erro
+Todo esse código de loop, passa por um processo de tentativa e erro, utilizando o "try except". Dessa forma, mesmo que ocorra algum erro durante a execução, o algoritmo não irá travar. Nesse sentido, ele simplesmente irá entender aquela nota como erro, preencher a lista_variaveis com a palavra "erro" nas variáveis, e inseri-la no dataframe.
 
 ```py
 try:
@@ -293,12 +292,12 @@ except Exception as e:
 &nbsp;
 ___
 
-#### 1.9 Carregamento de leitura
-Para haver um acompanhamento da leitura, o algortimo expoe no terminal algumas informações:
+#### 1.5 Carregamento de leitura
+Para ter um acompanhamento da leitura, o algortimo exibe no terminal algumas informações:
 
 * O nome do arquivo (escrito no no início do loop);
 * Quantidade de notas lidas;
-* Quantidade e porcentagem de notas imperfeitas (qualquer uma que não tiver a palavra "script" dentro da variável "script", ou seja, que não tem nenhuma unção apropriada para aquela prefeitura);
+* Quantidade e porcentagem de notas com alguma variável come erro (qualquer uma que não tiver a palavra "script" dentro da variável "script", ou seja, que não tem nenhuma função apropriada para aquela prefeitura);
 * Visualização de uma barra de progresso (baseada na quantidade de notas lidas pelo total).
 
 ```py
@@ -320,17 +319,20 @@ for i in tqdm(list(range(1,len(df)+1)), total=qtd_arquivos,  unit="item", bar_fo
 &nbsp;
 ___
 
-#### 1.10 Tratamento e Limpeza do DataFrame
+#### 1.6 Tratamento e Limpeza do DataFrame
 Após a criação do DataFrame, realiza-se ajustes para aprimorar a qualidade dos dados. Especificamente:
 
-* Coluna CNPJ:
+* Coluna `CNPJ`:
     * Remoção de caracteres não numéricos, mantendo apenas os dígitos.
     * Correção de um CNPJ específico para evitar interpretação incorreta
-* Coluna Valor:
+* Coluna `Valor Liquido`:
     * Eliminação de caracteres não numéricos, garantindo apenas valores numéricos.
-* Coluna Data:
+* Coluna `Data Emissao`:
     * Substituição de '-' por '/', uniformizando o formato.
     * Padronização de todas as datas para o formato dd/mm/aaaa.
+* Coluna `Razao Prestador Resumo`:
+    * Execução da função `extrai_maiusculas`, mantendo apenas as palavras escritas totalmente em maiúsculo .
+    * Separação das palavas pelo espaço e seleção das duas primeiras posições.
 
 
 ```py
@@ -347,14 +349,17 @@ df['Valor Liquido'] = df['Valor Liquido'].str.replace(r'[a-zA-Z$]', '', regex=Tr
 
 df['Data Emissao'] = df['Data Emissao'].str.replace(r'-', '/', regex=True)
 df['Data Emissao'] = df['Data Emissao'].str.extract(r'(\d{2}/\d{2}/\d{4})', expand = False)
+
+df['Razao Prestador Resumo'] = df['Razao Social Prestador'].apply(modulos_variaveis.extrair_maiusculas)
+df['Razao Prestador Resumo'] = df['Razao Prestador Resumo'].str.split(' ', n=2).apply(lambda x: ' '.join(x[:2]))
 ```
 &nbsp;
 ___
 
-#### 1.11 Validação do CNPJ
-Para validar a consistência dos CNPJs do Tomador nas notas fiscais em relação às empresas registradas no banco de dados, realizamos a extração da tabela de empresas do DW, situada no módulo empresas. Utilizando Python, efetuamos a limpeza e tratamento necessários na tabela de empresas para garantir a integridade dos dados. Em seguida, comparamos os CNPJs do Tomador nas notas fiscais com os CNPJs da tabela de empresas. 
+#### 1.7 Validação do CNPJ
+Para validar a consistência dos CNPJs do Tomador nas notas fiscais em relação às empresas registradas no banco de dados, realiza a extração da tabela de empresas do DW, situada no módulo empresas. Utilizando Python, efetua-se a limpeza e tratamento necessários na tabela de empresas para garantir a integridade dos dados. Em seguida, compara os CNPJs do Tomador nas notas fiscais com os CNPJs da tabela de empresas. 
 
-Quando há correspondência, incorporamos ao DataFrame das notas fiscais duas novas colunas: 'Codigo Tomador' com o código da empresa correspondente, e 'Empresa Tomador' com a razão social correspondente. Este processo tem como objetivo assegurar a conformidade dos CNPJs do Tomador com as empresas registradas, proporcionando uma análise consistente dos dados.
+Quando há correspondência, incorporam ao DataFrame das notas fiscais duas novas colunas: 'Codigo Tomador' com o código da empresa correspondente, e 'Empresa Tomador' com a razão social correspondente. Este processo tem como objetivo assegurar a conformidade dos CNPJs do Tomador com as empresas registradas, proporcionando uma análise consistente dos dados.
 
 ```py
 # Conexão com tabela empresas do banco
@@ -382,10 +387,10 @@ df['Empresa Tomador'] = np.where(
 &nbsp;
 ___
 
-#### 1.12 Coluna de Novos Nomes
-Com o intuito de padronizar os nomes dos arquivos de acordo com o conteúdo das notas fiscais, introduzimos uma coluna com um formato padrão: "Razão social do prestador + código do tomador + valor do serviço da nota". A criação dessa coluna é realizada invocando a função coluna_altera_nome do módulo variáveis. 
+#### 1.8 Coluna de Novos Nomes
+Com o intuito de padronizar os nomes dos arquivos de acordo com o conteúdo das notas fiscais, introduz uma coluna com um formato padrão: "Razão social do prestador + código do tomador + valor do serviço da nota". A criação dessa coluna é realizada invocando a função coluna_altera_nome do módulo variáveis. 
 
-Posteriormente, efetuamos uma limpeza na coluna, substituindo caracteres específicos e removendo acentos utilizando a função unidecode. Essa estratégia visa estabelecer uma identificação uniforme e descritiva para cada nota fiscal, facilitando a organização e referência dos arquivos
+Posteriormente, efetua uma limpeza na coluna, substituindo caracteres específicos e removendo acentos utilizando a função unidecode. Essa estratégia visa estabelecer uma identificação uniforme e descritiva para cada nota fiscal, facilitando a organização e referência dos arquivos
 
 ```py
 # Cria a coluna com o nome do arquivo alterado
@@ -406,7 +411,7 @@ modulos_renomear.renomeia(df)
 &nbsp;
 ___
 
-#### 1.13 Exportação do Resultado
+#### 1.9 Exportação do Resultado
 
 Durante o tratamento do dataframe já feito, utiliza-se alguns comandos de exportação dessa tabela para o Excel, com o intuito de garantir que, mesmo que o código dê algum erro no final, seja possível exportar a tabela, mesmo sem tratamento
 
@@ -423,7 +428,7 @@ df.to_excel(tabela_resposta, index=False)
 &nbsp;
 ___
 
-#### 1.14 Contagem do Tempo
+#### 1.10 Contagem do Tempo
 Por fim, é exposto no terminal o tempo total da leitura das notas.
 
 ```py
@@ -441,101 +446,11 @@ ___
 
 ## 2.0 Arquivo "modulos_variaveis.py"
 
-O objetivo principal deste módulo é orientar a execução para funções específicas dentro do módulo_prefeitura e também armazenar algumas funções de uso geral que serão utilizadas no módulo principal.
+O objetivo principal deste módulo é armazenar algumas funções de uso geral que serão utilizadas no módulo principal (leitura_NF.py).
 
-#### 2.1 Função para nota PDF
-Um exemplo de função de direcionamento para o módulo_prefeitura é o seguinte:
+#### 2.1 Função para leitura da nota
 
-1. Inicialmente, é determinada uma variável chamada "script" que indica o nome do script atualmente em execução.
-2. Em seguida, é invocada a função "pref_natal" do módulo_prefeitura. Esta função é responsável por extrair as variáveis necessárias de uma nota, seguindo o contexto do script atual.
-3. As variáveis extraídas são então reunidas em uma lista.
-4. Posteriormente, essa lista de variáveis é inserida no dataframe que está sendo construído, possibilitando a organização e manipulação dos dados.
-
-Este procedimento fornece uma clareza sobre o fluxo de execução do script, garantindo que as variáveis relevantes sejam corretamente extraídas e incorporadas ao dataframe em construção.
-
-```py
-def script_natal(texto_limpo, caminho, caminho_curto, arquivo, df):
-
-    script = 'natal_script'
-
-    modulo_prefeitura.pref_natal(texto_limpo) 
-
-    lista_variaveis = [modulos_prefeitura.num_nf, modulos_prefeitura.data_emissao, modulos_prefeitura.vlr_liquido, 
-                    modulos_prefeitura.cnpj_prestador, modulos_prefeitura.cnpj_tomador, 
-                    modulos_prefeitura.razao_prestador, modulos_prefeitura.razao_tomador, 
-                    modulos_prefeitura.prefeitura, script, caminho, caminho_curto, arquivo]
-
-    df.loc[len(df)] = lista_variaveis
-```
-
-!!! example ""
-    - **texto_limpo**: texto extraído da leitura do arquivo pdf
-    - **caminho**: caminho de localização do arquivo
-    - **caminho_curto**: as três últimas pastas do caminho
-    - **arquivo**: : nome do arquivo
-    - **df**: datafrane que está sendo construído durante o código
-    - **lista_variaveis**: lista contendo todas as variáveis extraídas da nota
-
-Essa função de "script_prefeituraX" se repete dezenas de vezes, pois é criado a cada prefeitura existente dentro das pastas de notas. 
-
-___
-
-#### 2.2 Função para nota PDF de baixa qualidade
-Existe uma variante adicional da função "script", na qual a nota inicial é apresentada como um texto convencional. No entanto, dentro dessa função, é realizada uma leitura de imagem da nota para otimizar a qualidade do texto extraído. Isso se torna especialmente relevante em casos nos quais algumas prefeituras disponibilizam notas em formato PDF comum, resultando em uma extração de texto de baixa qualidade. Ao empregar a leitura de imagem, busca-se aprimorar a precisão e clareza do texto obtido.
-
-```py
-def script_rio_largo(caminho, caminho_curto, arquivo, df):
-
-    script = 'rio_largo_script'
-
-    texto_imagem = modulos_ler_imagem_v1.get_text_from_any_pdf(caminho)
-    texto_imagem = texto_imagem.split('\n')
-    texto_imagem = [item.strip() for item in texto_imagem if item.strip() != '']
-
-    modulos_prefeitura.pref_rio_largo(texto_imagem)
-
-    lista_variaveis = [modulos_prefeitura.num_nf, modulos_prefeitura.data_emissao, modulos_prefeitura.vlr_liquido, 
-                    modulos_prefeitura.cnpj_prestador, modulos_prefeitura.cnpj_tomador, 
-                    modulos_prefeitura.razao_prestador, modulos_prefeitura.razao_tomador, 
-                    modulos_prefeitura.prefeitura, script, caminho, caminho_curto, arquivo]
-
-    df.loc[len(df)] = lista_variaveis
-```
-
-!!! example ""
-    - **texto_imagem**: texto extraído da leitura do arquivo pdf com imagem
-
-___
-
-#### 2.3 Função para nota PDF de imagem
-Existe também uma tereceira variante adicional da função "script", usada nas notas pdf com imagem. Com isso, em vez da entrada de texto_limpo, terá de texto_imagem.
-
-Neste contexto, dado que a função principal do algoritmo já incorpora a capacidade de realizar a leitura de imagens ao identificar que um PDF é do tipo imagem, não é necessário explicitar a função de leitura de imagem dentro da função "script". Em vez disso, basta utilizar o nome da variável que contém a imagem como entrada para garantir a efetiva leitura e processamento.
-
-```py
-def script_recife(texto_imagem, caminho, caminho_curto, arquivo, df):
-
-    script = 'recife_script'
-
-    modulos_prefeitura.pref_recife(texto_imagem)
-
-    lista_variaveis = [modulos_prefeitura.num_nf, modulos_prefeitura.data_emissao, modulos_prefeitura.vlr_liquido, 
-                    modulos_prefeitura.cnpj_prestador, modulos_prefeitura.cnpj_tomador, 
-                    modulos_prefeitura.razao_prestador, modulos_prefeitura.razao_tomador, modulos_prefeitura.prefeitura,
-                    script, caminho, caminho_curto, arquivo]
-
-    df.loc[len(df)] = lista_variaveis
-
-```
-!!! example ""
-    - **texto_imagem**: texto extraído da leitura do arquivo pdf com imagem
-
-&nbsp;
-___
-
-#### 2.4 Função para leitura da nota
-
-A função le_contrato tem como objetivo ler um contrato em formato PDF, utilizando a biblioteca PDFminer Ela realiza a extração de texto de cada página do PDF e armazena o resultado em uma variável global chamada output_string. Essa função é útil quando se deseja processar o conteúdo textual de contratos presentes em documentos PDF.
+A função le_contrato tem como objetivo ler um contrato em formato PDF, utilizando a biblioteca PDFminer. Ela realiza a extração de texto de cada página do PDF e armazena o resultado em uma variável global chamada output_string. Essa função é útil quando se deseja processar o conteúdo textual de contratos presentes em documentos PDF.
 
 ```py
 def le_contrato(caminho):
@@ -567,12 +482,12 @@ def le_contrato(caminho):
 
 !!! example ""
     - **caminho**: caminho de localização do arquivo
-Dessa forma, é retornada a variável output_string, que no arquivo leitura_NF.py, irá ser chamada.
+
 
 &nbsp;
 ___
 
-#### 2.5 Função alteração nome de coluna
+#### 2.2 Função alteração nome de coluna
 
 Uma utilidade do algoritmo é criar uma coluna no dataframe com o novo nome de alteração do arquivo, um nome padronizado com 'razao social do prestador_codigo da empresa_valor da nota'.
 
@@ -583,26 +498,25 @@ No entanto, o novo nome só é gerado se os valores dessas colunas atenderem a c
 ```py
 def coluna_altera_nome(row):
     # Obtém os valores das colunas relevantes do DataFrame
-    prestador = row['Razao Social Prestador']
+    prestador = row['Razao Prestador Resumo']
     tomador = row['Codigo Tomador']
     valor = row['Valor Liquido']
     arquivo = row['Arquivo']
-
     try:
         # Verifica se os valores atendem aos critérios para a criação de um novo nome
-        if (prestador is not None and prestador.strip()) and prestador not in ['erro'] and prestador != 'nao_achado' and \
+        if (prestador is not None and prestador.strip()) and prestador not in ['erro'] and prestador != 'nao_achado' and not any(char.isdigit() for char in prestador) and \
             tomador != '-' and \
             (valor is not None and valor.strip()) and valor not in ['erro'] and valor != 'nao_achado' and valor != '_':
-            
+
             # Cria um novo nome conforme o padrão estabelecido
             novo_nome = prestador + '__EMP' + tomador + '__' + str(valor) + '.pdf'
-            
+
             # Verifica se o novo nome não excede o limite de 256 caracteres
             if len(novo_nome) <= 256:
                 return novo_nome
             else:
                 # Retorna um indicativo caso o novo nome exceda o limite de caracteres
-                return 'Excedeu_Caracter'
+                'Excedeu_Caracter'
         else:
             # Se os critérios não forem atendidos, retorna o valor original da coluna 'Arquivo'
             return arquivo
@@ -617,7 +531,7 @@ def coluna_altera_nome(row):
 &nbsp;
 ___
 
-#### 2.6 Função limpa acento
+#### 2.3 Função limpa acento
 
 Esta função, `limpa_acento`, tem como objetivo remover caracteres epeciais e acentos.
 
@@ -635,8 +549,34 @@ def limpa_acento(texto):
 &nbsp;
 ___
 
+#### 2.4 Função extrai maiúsculas
+
+Esta função, `extrair_maiusculas`, tem como objetivo extrair do input apenas as palavras escritas com letras maiúsculas. 
+
+```py
+def extrair_maiusculas(row):
+    try:
+        palavras_maiusculas = re.findall(r'\b[A-Z]+\b', row)
+        if palavras_maiusculas:
+            return ' '.join(palavras_maiusculas)
+        else:
+            return row
+    except:
+        pass
+```
+
+&nbsp;
+___
+
 ## 3.0 Arquivo "modulos_prefeituras.py"
-O propósito deste arquivo é criar um script dedicado para cada prefeitura, com o objetivo de extrair informações cruciais de notas fiscais. As variáveis de interesse incluem o número da nota, a data de emissão, o valor bruto, a razão social, o CNPJ dos prestadores e tomadores de serviço, além do nome da prefeitura (local de prestação do serviço).
+O propósito deste arquivo é criar um script dedicado para cada prefeitura, com o objetivo de extrair informações cruciais de notas fiscais. As variáveis de interesse são:
+
+* Número da nota
+* Data de emissão
+* Valor bruto
+* Razão social dos prestadores e tomadores de serviço
+* CNPJ dos prestadores e tomadores de serviço
+* Nome da prefeitura (local de prestação do serviço)
 
 Cada script específico para uma prefeitura é definido como uma função, onde um loop `for` é empregado para percorrer todas as linhas do texto da nota. Dentro desse loop, há a busca por palavras-chave específicas. Ao encontrar uma correspondência, o script captura o valor associado e armazena-o em uma variável. Isso permite a extração eficiente de cada variável relevante do texto da nota fiscal.
 
@@ -646,21 +586,211 @@ Em alguns casos, ao invés de buscar por uma palavra-chave específica como "dat
 
 As variáveis extraídas, contendo as informações relevantes, são consolidadas em uma lista. Essa lista é criada no módulo_variaveis, conforme detalhado no tópico 2.0, e posteriormente é utilizada para alimentar um dataframe. Essa abordagem possibilita a organização e estruturação eficiente das informações extraídas das notas fiscais.
 
+
+Há 3 tipos de arquivo de nota fiscal que requerem funções específicas:
+
+### Tipo 1: Arquivo PDF com boa nitidez 
+Recebe como entrada o texto e realiza a captura das variáveis pelo loop for.
+
 ```py
-def pref_goncalves(texto_imagem):
+def pref_salinas(texto_limpo,caminho, caminho_curto, arquivo, df):
     global prefeitura, num_nf, data_emissao, vlr_liquido, razao_prestador, razao_tomador, cpf, cnpj_prestador, cnpj_tomador
 
-    # PREFEITURA
-    prefeitura = 'PREFEITURA MUNICIPAL DE GOLCALVEZ DIAS'
+    for indice, item in enumerate(texto_limpo):
+        if 'prefeitura' in item.lower():
+            prefeitura = texto_limpo[indice]
+            break
+        else:
+            prefeitura = 'nao_achado'
 
     # extrair NUMERO NOTA FISCAL
-    for indice, item in enumerate(texto_imagem):
-        if 'numero da nota' in item.lower():
-            num_nf = texto_imagem[indice+1]
+    for indice, item in enumerate(texto_limpo):
+        if 'número nota fiscal' in item.lower():
+            num_nf = texto_limpo[indice+1]
+            break
+        if 'nota fiscal' in item.lower():
+            num_nf = texto_limpo[indice+2]
             break
         else:
             num_nf = 'nao_achado'
 
+    # extrair DATA EMISSAO
+    for indice, item in enumerate(texto_limpo):
+        if 'data de emissão nota' in item.lower():
+            data_emissao = texto_limpo[indice+1]
+            break
+        else:
+            data_emissao = 'nao_achado'
+
+    # extrair VALOR LIQUIDO
+    for indice, item in enumerate(texto_limpo):
+        if 'total geral' in item.lower():
+            vlr_liquido = texto_limpo[indice+1]
+            break
+        else:
+            vlr_liquido = 'nao_achado'
+
+    # extair RAZÃO SOCIAL PRESTADOR
+    for indice, item in enumerate(texto_limpo):
+        if 'razão social prestador' in item.lower():
+            razao_prestador = texto_limpo[indice+1]
+            break
+        else:
+            razao_prestador = 'nao_achado'
+
+    # extrair RAZÃO SOCIAL TOMADOR
+    for indice, item in enumerate(texto_limpo):
+        if 'nome do tomador' in item.lower():
+            razao_tomador = texto_limpo[indice+1]
+            break
+        else:
+            razao_tomador = 'nao_achado'
+
+    # extrair CPF PRESTADOR E TOMADOR
+    posicoes = []
+    for indice, item in enumerate(texto_limpo):
+        global cnpj_prestador, cnpj_tomador
+        if 'nº cpf/cnpj' in item.lower():
+            posicoes.append(indice)   
+        else:
+            cnpj_prestador = 'nao_achado'
+            cnpj_tomador = 'nao_achado'
+
+    cnpj_prestador = texto_limpo[posicoes[0]+1]
+    if any(caractere.isalpha() for caractere in cnpj_prestador):
+        cnpj_prestador = texto_limpo[posicoes[0]+2]
+
+    cnpj_tomador = texto_limpo[posicoes[1]+1]
+    if any(caractere.isalpha() for caractere in cnpj_tomador):
+        cnpj_tomador = texto_limpo[posicoes[1]+2]
+
+    # Insere no dataframe
+    script = 'salinas_script'
+
+    lista_variaveis = [num_nf, data_emissao,vlr_liquido, cnpj_prestador, cnpj_tomador, 
+                    razao_prestador, razao_tomador, prefeitura, script, caminho, caminho_curto, arquivo]
+
+    df.loc[len(df)] = lista_variaveis
+```
+!!! example ""
+    - **texto_limpo**: texto extraído da leitura do arquivo pdf
+    - **caminho**: caminho de localização do arquivo
+    - **caminho_curto**: as três últimas pastas do caminho
+    - **arquivo**: nome do arquivo
+    - **df**: datafrane que está sendo construído durante o código
+
+___
+
+### Tipo 2: Arquivo PDF com baixa nitidez 
+Transforma o arquivo em imagem, faz o tartamento,extrai e realiza a captura das variáveis pelo loop for.
+
+```py
+def pref_sirinhaem_imagem(caminho, caminho_curto, arquivo, df):
+    global prefeitura, num_nf, data_emissao, vlr_liquido, razao_prestador, razao_tomador, cpf, cnpj_prestador, cnpj_tomador
+
+    texto_imagem = modulos_ler_imagem.get_text_from_any_pdf(caminho)
+    texto_imagem = texto_imagem.split('\n')
+    texto_imagem = [item.strip() for item in texto_imagem if item.strip() != '']
+
+    # extrair PREFEITURA
+    prefeitura = 'PREFEITURA MUNICIPAL DE SIRINHAEM'
+
+    # extrair NUMERO NOTA FISCAL
+    num_nf = 'nao_achado'
+
+    # extrair DATA EMISSAO 
+    padrao = r'\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2}'
+    posicoes = []
+    for elemento in texto_imagem:
+        match = re.search(padrao, elemento)
+        if match:
+            posicoes.append(match.group())
+        else:
+            data_emissao = 'nao_achado'
+
+    if posicoes:
+        data_emissao = posicoes[0]
+
+    # extrair VALOR LÍQUIDO
+    for indice, item in enumerate(texto_imagem):
+        if 'valor total' in item.lower():
+            vlr_liquido = texto_imagem[indice]
+            if 'R$' in vlr_liquido:
+                vlr_liquido = vlr_liquido.split('R$')[1].strip()
+                break
+            break
+        else:
+            vlr_liquido = 'nao_achado'
+
+    # extrair RAZÃO PRESTADOR
+    posicoes = []
+    for indice, item in enumerate(texto_imagem):
+        if 'razao' in item.lower():
+            posicoes.append(indice)
+        else:
+            razao_prestador = 'nao_achado'
+
+    razao_prestador = texto_imagem[posicoes[0]]
+    if ':' in razao_prestador:
+        razao_prestador = razao_prestador.split(':')[1].strip()
+
+    razao_tomador = texto_imagem[posicoes[1]]
+    if ':' in razao_tomador:
+        razao_tomador = razao_tomador.split(':')[1].strip()
+
+    # extrair CPF PRESTADOR
+    padrao = r'\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}'
+    posicoes = []
+    for indice, item in enumerate(texto_imagem):
+        if re.search(padrao, item):
+            posicoes.append(indice)
+
+    if posicoes:
+        cnpj_prestador = texto_imagem[posicoes[0]]
+        if not re.findall(padrao, cnpj_prestador):
+            cnpj_prestador = cnpj_prestador
+        else:
+            cnpj_prestador = re.findall(padrao, cnpj_prestador)[0]
+
+        cnpj_tomador = texto_imagem[posicoes[1]]
+        if not re.findall(padrao, cnpj_tomador):
+            cnpj_tomador = cnpj_tomador
+        else:
+            cnpj_tomador = re.findall(padrao, cnpj_tomador)[0] 
+
+    # Insere no dataframe
+    script = 'sirinhaem_imagem_script'
+
+    lista_variaveis = [num_nf, data_emissao, vlr_liquido, cnpj_prestador, cnpj_tomador, 
+                    razao_prestador, razao_tomador, prefeitura, script, caminho, caminho_curto, arquivo]
+
+    df.loc[len(df)] = lista_variaveis
+```
+
+!!! example ""
+    - **caminho**: caminho de localização do arquivo
+    - **caminho_curto**: as três últimas pastas do caminho
+    - **arquivo**: nome do arquivo
+    - **df**: datafrane que está sendo construído durante o código
+
+___
+
+### Tipo 3: Arquivo PDF com texto não selecionável 
+Recebe como entrada o texto extraído da imagem, no arquivo leitura_NF, e realiza a captura das variáveis pelo loop for.
+
+```py
+def pref_salinopolis_imagem(texto_imagem, caminho, caminho_curto, arquivo, df):
+    global prefeitura, num_nf, data_emissao, vlr_liquido, razao_prestador, razao_tomador, cpf, cnpj_prestador, cnpj_tomador
+
+    prefeitura = 'PREFEITURA DE SALINÓPOLIS'
+
+    # extrair NUMERO NOTA FISCAL
+    for indice, item in enumerate(texto_imagem):
+        if 'numero nota fiscal' in item.lower():
+            num_nf = texto_imagem[indice+1]
+            break
+        else:
+            num_nf = 'nao_achado'
 
     # extrair DATA EMISSAO 
     padrao = r'\d{2}/\d{2}/\d{4}'
@@ -674,67 +804,78 @@ def pref_goncalves(texto_imagem):
 
     data_emissao = posicoes[0]
 
-
     # extrair VALOR LÍQUIDO
     for indice, item in enumerate(texto_imagem):
-        if 'liquido' in item.lower():
+        if 'base de calculo' in item.lower():
             vlr_liquido = texto_imagem[indice+1]
+            if ' ' in vlr_liquido:
+                vlr_liquido = vlr_liquido.split(' ')[-3].strip()
+                break
             break
         else:
             vlr_liquido = 'nao_achado'
 
-    if ' ' in vlr_liquido:
-        vlr_liquido = vlr_liquido.split(' ')[-1].strip()
-
-
-    # extrair RAZÃO
-    posicoes = []
+    # extrair RAZÃO PRESTADOR e TOMADOR
     for indice, item in enumerate(texto_imagem):
-        if 'social' in item.lower():
-            posicoes.append(indice)
+        if 'social prestador' in item.lower():
+            razao_prestador = texto_imagem[indice+1]
+            break
         else:
             razao_prestador = 'nao_achado'
+
+    for indice, item in enumerate(texto_imagem):
+        if 'nome do tomador' in item.lower():
+            razao_tomador = texto_imagem[indice+1]
+            break
+        else:
             razao_tomador = 'nao_achado'
 
-    razao_prestador = texto_imagem[posicoes[0]+1]
-    if ':' in razao_prestador:
-        razao_prestador = razao_prestador.split(':')[-1].strip()
 
-    razao_tomador = texto_imagem[posicoes[1]+1]
-    if ':' in razao_tomador:
-        razao_tomador = razao_tomador.split(':')[-1].strip()
-
-
-    # extrair CPF
+    # extrair CPF PRESTADOR e TOMADOR
     posicoes = []
     for indice, item in enumerate(texto_imagem):
-        if 'cpf' in item.lower():
+        if 'cpf/' in item.lower():
             posicoes.append(indice)
         else:
             cnpj_prestador = 'nao_achado'
             cnpj_tomador = 'nao_achado'
 
-    padrao = r'\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}'
+    if posicoes:
+        cnpj_prestador = texto_imagem[posicoes[0]+1]
+        if ' ' in cnpj_prestador:
+            cnpj_prestador = cnpj_prestador.split(' ')[0].strip()
+            cnpj_prestador = cnpj_prestador.replace(',', '.')
 
-    cnpj_prestador = texto_imagem[posicoes[0]+1]
-    if not re.findall(padrao, cnpj_prestador):
-        cnpj_prestador = cnpj_prestador
-    else:
-        cnpj_prestador = re.findall(padrao, cnpj_prestador)[0]
+        cnpj_tomador = texto_imagem[posicoes[1]+1]
+        if ' ' in cnpj_tomador:
+            cnpj_tomador = cnpj_tomador.split(' ')[0].strip()
+            cnpj_tomador = cnpj_tomador.replace(',', '.')
+    
+    # Insere no dataframe
+    script = 'salinopolis_imagem_script'
 
-    cnpj_tomador = texto_imagem[posicoes[1]+1]
-    if not re.findall(padrao, cnpj_tomador):
-        cnpj_tomador = cnpj_tomador
-    else:
-        cnpj_tomador = re.findall(padrao, cnpj_tomador)[0]
+    lista_variaveis = [num_nf, data_emissao, vlr_liquido, cnpj_prestador, cnpj_tomador, 
+                    razao_prestador, razao_tomador, prefeitura, script, caminho, caminho_curto, arquivo]
+
+    df.loc[len(df)] = lista_variaveis
+
 ```
+!!! example ""
+    - **texto_imagem**: texto extraído da leitura do arquivo pdf com imagem
+    - **caminho**: caminho de localização do arquivo
+    - **caminho_curto**: as três últimas pastas do caminho
+    - **arquivo**: nome do arquivo
+    - **df**: datafrane que está sendo construído durante o código
+
+No final das funções, nota-se a parte do código comentada de *"Insere no dataframe"*, que atribui a variável *script* com o nome referente àquela função, acrescenta na *lista_varaiveis* todas as variáveis capturadas do arquivo e insere essa lista no dataframe.
+
 
 &nbsp;
 
 !!! tip "Nota"
     *Por que não se usa apenas uma função prefeitura para extrair as variáveis de todas as notas?*
 
-    A escolha de utilizar funções específicas para cada prefeitura, em vez de uma função única para todas as notas, se deve à natureza única do formato de texto extraído de cada prefeitura específica. Cada prefeitura pode adotar um formato único de nota fiscal, resultando em diferenças nos nomes das palavras-chave relevantes e nas posições dessas palavras-chave no texto. Por isso é uma função para a prefeitura de Natal, outra para a prefeitura de Gonçalves Dias, outra para Goiânia e assim por diante.
+    A escolha de utilizar funções específicas para cada prefeitura, em vez de uma função única para todas as notas, se deve à natureza única do formato de texto extraído de cada prefeitura específica. Cada prefeitura pode adotar um formato único de nota fiscal, resultando em diferenças nos nomes das palavras-chave relevantes e nas posições dessas palavras-chave no texto. Por isso existe uma função para a prefeitura de Natal, outra para a prefeitura de Gonçalves Dias, outra para Goiânia e assim por diante.
 
     Por exemplo, o termo que representa o "Valor Bruto" em uma nota da prefeitura X pode ser diferente de outra nota da prefeitura Y, podendo ser "Valor Total" ou "Valor dos Serviços". Além disso, as posições dessas palavras-chave e dos valores associados podem variar.
 
@@ -744,7 +885,7 @@ def pref_goncalves(texto_imagem):
 
 &nbsp;
 
-Um ponto extremamente positivo é que, atualmente, foi estabelecido um padrão para notas fiscais do tipo MEI, abrangendo cerca de 50% das notas que seguem esse formato padronizado. Nesse contexto, destaca-se a função pref_danfse, especialmente desenvolvida para esse tipo específico de nota. Essa função demonstra uma leitura de alta qualidade e uma extração de variáveis bastante precisa.
+Um ponto extremamente positivo é que, atualmente, foi estabelecido um padrão para notas fiscais do tipo MEI, abrangendo cerca de 50% das notas que são utilizadas pelo algoritmo atualmente. Nesse contexto, destaca-se a função pref_danfse, especialmente desenvolvida para esse tipo específico de nota. Essa função demonstra uma leitura de alta qualidade e uma extração de variáveis bastante precisa.
 
 No módulo_prefeituras, foram implementadas quatro funções dedicadas ao processamento de notas fiscais do tipo MEI. A necessidade de quatro funções distintas surge de possíveis variações nas dimensões do papel da nota durante a emissão, o que demanda um reconhecimento específico para cada cenário.
 
@@ -759,7 +900,7 @@ ___
 
 Este script foi desenvolvido com o propósito de renomear cada arquivo de nota fiscal de acordo com os nomes indicados na coluna 'Arquivo_Nome_Alterado', mencionada no tópico 1.12.
 
-A função `renomeia` (chamada no arquivo leitura_nf.py) emprega um loop para percorrer as linhas de um DataFrame (df) contendo informações sobre arquivos. Em cada iteração, o código obtém o caminho e o nome do arquivo antigo, e então cria um novo caminho com base no nome alterado e um apelido correspondente. O objetivo principal é renomear os arquivos e atualizar as informações associadas no DataFrame.
+A função `renomeia` (chamada no arquivo leitura_nf.py) emprega um loop para percorrer as linhas de um DataFrame contendo informações sobre arquivos. Em cada iteração, o código obtém o caminho e o nome do arquivo antigo, e então cria um novo caminho com base no nome alterado e um apelido correspondente. O objetivo principal é renomear os arquivos e atualizar as informações associadas no DataFrame.
 
 Ao tentar efetuar a renomeação, o código utiliza blocos `try` e `except` para lidar com exceções. Se a renomeação for bem-sucedida, as informações no DataFrame são atualizadas. Em caso de falha, o código tenta realizar uma limpeza nos nomes, utilizando a biblioteca `unidecode` para remover caracteres especiais e acentos. Se essa tentativa de limpeza também resultar em erro, o código mantém as informações originais no DataFrame.
 
