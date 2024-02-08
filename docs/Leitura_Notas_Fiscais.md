@@ -984,7 +984,6 @@ try:
     
         print("Conexão com o banco de dados estabelecida com sucesso.")
 
-        # Seu código para manipular o banco de dados
         query = "select cod_empresa, empresa , cnpj from corporativo.empresas e "
         global df_empresas
         df_empresas = pd.read_sql_query(query, engine)
