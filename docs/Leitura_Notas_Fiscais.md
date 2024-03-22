@@ -1076,3 +1076,41 @@ Este código Python tem como objetivo realizar a extração de texto de arquivos
 Inicialmente, são configurados os caminhos para os executáveis do Tesseract OCR e do Poopler no ambiente. Em seguida, a função `convert_pdf_to_img` utiliza a biblioteca `pdf2image` para transformar um arquivo PDF em uma lista de imagens, com uma resolução de 500 dpi e o caminho específico do Poopler. A função `convert_image_to_text` emprega o Tesseract OCR para converter uma imagem em texto, utilizando como entrada o arquivo de imagem gerado pela função anterior.
 
 A função final, `get_text_from_any_pdf`, combina essas etapas para extrair texto de qualquer arquivo PDF. Ela itera sobre as páginas do documento, acumulando o texto extraído, e o resultado final é armazenado na variável `final_text`. Esse conjunto de operações atende à necessidade de processar PDFs que não possuem texto selecionável, empregando técnicas de reconhecimento óptico de caracteres para interpretar documentos tratados como imagens.
+&nbsp;
+___
+
+## 7.0 Correcão de erros
+
+![alt text](tipos_erros_leitura.jpg)
+
+&nbsp;
+
+### 7.1 Erros de leitura
+
+Na tabela a seguir, é perceptível que o campo de valor contém um caractere de erro, e o CNPJ do tomador está incompleto. Essas disparidades representam um erro de leitura, pois a nota foi identificada, registrada, porém, contém discrepâncias em suas informações.
+
+![alt text](erro_leitura.jpg)
+
+Quando uma nota é lida, pode haver inconsistências nas variáveis extraídas, como "data de emissão", "valor da nota", entre outras. Essas inconsistências são semelhantes a erros de leitura, pois embora a nota tenha passado por alguma função de prefeitura e suas variáveis tenham sido extraídas, por algum motivo, como diferenças na formatação ou posicionamento de caracteres, informações incorretas podem ser extraídas.
+
+Para corrigir esse tipo de erro manualmente em uma planilha é mais fácil, pois basta acessar o caminho do diretório da nota, identificar o valor correto daquele campo e inserir manualmente na planilha o valor correto.
+
+Para corrigir esse tipo de erro no código é igualmente viável. Pode-se realizar testes no Jupyter Notebook, fazer a extração dos dados da nota, e realizar a função especifica dessa prefeitura. Assim, ao executar a célula, qualquer erro será destacado. Identificando a linha do erro, basta corrigir no código de teste e, em seguida, aplicar a correção no código original.
+
+Essa abordagem permite uma correção mais rápida e precisa dos erros de extração de dados, garantindo uma maior precisão e confiabilidade no processamento das notas fiscais.
+
+&nbsp;
+
+### 7.2 Erros de falha na leitura
+
+Exitem 2 tipos de erros de falha na leitura:
+
+#### Falha na execução de código
+Este tipo de erro ocorre quando a nota tem o texto extraído e passa por uma função específica da prefeitura, mas, por algum motivo, um erro de código é gerado. Por exemplo, "list index out of range" indica que o código tentou acessar um índice de elemento que não existe, ou " '-' is not in list" indica que o código tentou selecionar '-' de uma lista, mas esse caractere não estava presente no elemento. A solução para esse caso envolve verificar se o caractere ou elemento está presente antes de tentar acessá-lo.
+
+&nbsp;
+
+#### Falha de identificação
+Este tipo de erro é categorizado como "não localizado" porque a nota nem sequer passou por uma função da prefeitura. Isso ocorre quando o nome da prefeitura não está presente no código dentro da nota ou no formato esperado pelo código. Nesse caso, é altamente provável que se trate de uma prefeitura nova para a qual ainda não foi criada uma função específica. Portanto, será necessário desenvolver uma função específica para lidar com esse tipo de prefeitura nova.
+
+
